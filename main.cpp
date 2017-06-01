@@ -13,7 +13,7 @@ int main(){
 //    fin<<word;
 //    cout>>word>>flush;
 
-    Converter::everything(fin, fout);
+    Converter converter(fin, fout);
 
     fin.close();
     fout.close();

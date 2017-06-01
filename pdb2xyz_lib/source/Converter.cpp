@@ -5,21 +5,18 @@
 using namespace std;
 using namespace PCA;
 
-int Converter::everything(std::ifstream& fin, std::ofstream& fout){
+Converter::Converter(std::ifstream& fin, std::ofstream& fout){
     string word;
     string line;
-    double value;
     double x, y, z;
     string atomName;
     string atom = "ATOM";
     string end = "END";
     string endmdl = "ENDMDL";
-    int i;
     
     cout<<"begin"<<"\n";
     do{
 	fin>>word;
-//	cout<<word;
 	if(word.compare(atom)==0){ //find "ATOM"
 	    fin.ignore(24); //skip everything before coordinates;
 	    fin>>x;
@@ -28,13 +25,23 @@ int Converter::everything(std::ifstream& fin, std::ofstream& fout){
 	    fin.ignore(22); //skip everything before atom name;
 	    fin>>atomName;
 	    
-	    cout<<atomName<<"\t";
-	    cout<<x<<"\t";
-	    cout<<y<<"\t";
-	    cout<<z<<"\n";
+	    data.push_back(make_tuple(x,y,x,atomName));
 	}
-    }while(word.compare(end)!=NULL);
+    }while(word.compare(end)!= 0);
     
+    
+    fout<<data.size()<<"\n";
+    fout<<"comment\n";
+    for(int i=0; i<data.size(); i++){
+	fout<<get<3>(data[i])<<"\t"; // print atom name
+	fout<<get<0>(data[i])<<"\t"; // print x
+	fout<<get<1>(data[i])<<"\t"; // print y
+	fout<<get<2>(data[i])<<"\n"; // print z
+    }
+    
+//    fout.seekp(ios_base::beg); //return the carrege to the beginning of the file
+//    fout<<count<<"\n";
     cout<<"end"<<"\n";
-return 0;
 }
+
+Converter::~Converter(){};
