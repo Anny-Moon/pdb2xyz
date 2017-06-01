@@ -12,7 +12,7 @@ Converter::Converter(std::ifstream& fin, std::ofstream& fout){
     double resNumber;
     string elementSymbol;
     string atomName;
-    char chainIdent;
+    char chainID;
     string atom = "ATOM";
     string end = "END";
     string endmdl = "ENDMDL";
@@ -30,11 +30,9 @@ cout<<word<<"\n"<<flush;
 	
 	    fin.ignore(8);
 	    fin>>setw(4)>>atomName;
-	    cout<<atomName<<"\t"<<flush;
 	    fin.ignore(4+(4-atomName.size()));
-	    fin>>chainIdent;
+	    fin>>chainID;
 	    fin>>setw(4)>>resNumber;
-	    cout<<chainIdent<<"\t"<<resNumber<<"\n"<<flush;
 	    
 //	    fin.ignore(24); //skip everything from ATOM to coordinates;
 	    fin>>setw(8)>>x;
@@ -43,7 +41,7 @@ cout<<word<<"\n"<<flush;
 	    fin.ignore(22); //skip everything before atom name;
 	    fin>>setw(2)>>elementSymbol;
 	    
-	    data.push_back(make_tuple(x,y,z,elementSymbol,"",0));
+	    data.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
 	}
     }while(word.compare(end)!= 0);
     
@@ -54,6 +52,10 @@ cout<<word<<"\n"<<flush;
 	fout<<get<0>(data[i])<<"\t"; // print x
 	fout<<get<1>(data[i])<<"\t"; // print y
 	fout<<get<2>(data[i])<<"\n"; // print z
+	
+	cout<<get<4>(data[i])<<"\t";
+	cout<<get<6>(data[i])<<"\t";
+	cout<<get<5>(data[i])<<"\n";
     }
     
 //    fout.seekp(ios_base::beg); //return the carrege to the beginning of the file

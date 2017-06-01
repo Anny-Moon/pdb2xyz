@@ -9,8 +9,8 @@ class Converter{
 private:
 //    std::ifstream& fin;
 
-    /** x, y, z, <element symbol> <atom name> <residue nuber> <chain identifier>*/
-    std::vector<std::tuple <double, double, double, std::string, std::string, int>>data;
+    /** x, y, z, <element symbol> <atom name> <residue nuber> <chainID>*/
+    std::vector<std::tuple <double, double, double, std::string, std::string, int, char>>data;
 
 public:
     Converter(std::ifstream& fin, std::ofstream& fout);
