@@ -13,9 +13,10 @@ private:
     std::vector<std::tuple <double, double, double, std::string, std::string, int, char>>data;
 
 public:
-    Converter(std::ifstream& fin, std::ofstream& fout);
+    Converter(std::ifstream& fin);
     ~Converter();
-    static int everything();
-    static int CA(std::ofstream& fout);
+    int allAtoms(std::ofstream& fout);
+    int CA(std::ofstream& fout);
+    int check();
 };
 }// end of namespase PCA
