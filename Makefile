@@ -1,7 +1,7 @@
 CC := g++
 OPT:= -O3
 CFLAGS := -Wall -std=c++11
-PROGRAM := pdb2xyz
+PROGRAM := pdb2xyz.out
 #LIB:= -I/Users/annsi118/Documents/Git_projects/PCA_private/include -L/Users/annsi118/Documents/Git_projects/PCA_private/build
 LDLIB := -I/Users/annsi118/Documents/Git_projects/pdb2xyz/pdb2xyz_lib/include -L/Users/annsi118/Documents/Git_projects/pdb2xyz/pdb2xyz_lib/build -lpdb2xyz
 

@@ -9,26 +9,43 @@ Converter::Converter(std::ifstream& fin, std::ofstream& fout){
     string word;
     string line;
     double x, y, z;
+    double resNumber;
+    string elementSymbol;
     string atomName;
+    char chainIdent;
     string atom = "ATOM";
     string end = "END";
     string endmdl = "ENDMDL";
     
     cout<<"begin"<<"\n";
+
+//cout<<fin.width()<<"\n";    
+fin>>setw(15)>>word;
+cout<<word<<"\n"<<flush;
+
+//fin>>setw(0);
     do{
 	fin>>word;
 	if(word.compare(atom)==0){ //find "ATOM"
-	    fin.ignore(24); //skip everything before coordinates;
-	    fin>>x;
-	    fin>>y;
-	    fin>>z;
-	    fin.ignore(22); //skip everything before atom name;
-	    fin>>atomName;
+	
+	    fin.ignore(8);
+	    fin>>setw(4)>>atomName;
+	    cout<<atomName<<"\t"<<flush;
+	    fin.ignore(4+(4-atomName.size()));
+	    fin>>chainIdent;
+	    fin>>setw(4)>>resNumber;
+	    cout<<chainIdent<<"\t"<<resNumber<<"\n"<<flush;
 	    
-	    data.push_back(make_tuple(x,y,x,atomName));
+//	    fin.ignore(24); //skip everything from ATOM to coordinates;
+	    fin>>setw(8)>>x;
+	    fin>>setw(8)>>y;
+	    fin>>setw(8)>>z;
+	    fin.ignore(22); //skip everything before atom name;
+	    fin>>setw(2)>>elementSymbol;
+	    
+	    data.push_back(make_tuple(x,y,z,elementSymbol,"",0));
 	}
     }while(word.compare(end)!= 0);
-    
     
     fout<<data.size()<<"\n";
     fout<<"comment\n";
