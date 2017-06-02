@@ -15,6 +15,7 @@ private:
     int numAtoms;
     int numChains;
     std::vector<int> numAtomsInChain;
+    std::vector<int> chainDelimiter;
     
 public:
     Converter(std::string name_in);

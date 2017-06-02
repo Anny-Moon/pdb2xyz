@@ -13,7 +13,7 @@ inline int Utile::abc(char letter){
 }
 
 inline char Utile::abc(int number){
-    return (char)((int)'A' + number);
+    return (char)((int)'A' + number - 1);
 }
 
 }//end of namespace PCA

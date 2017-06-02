@@ -59,6 +59,7 @@ Converter::Converter(string name_in){
 	    oneModel.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
 	    
 	    if(chainID!=previousChainID){
+		chainDelimiter.push_back(count);
 		numAtomsInChain.push_back(count-countInChain);
 		countInChain=count;
 	    }
@@ -71,10 +72,10 @@ Converter::Converter(string name_in){
 	    oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
 	}
     }while(word.compare(end)!= 0);
-    
+    chainDelimiter.push_back(count);
     numAtomsInChain.push_back(count-countInChain);
 for(int i=0;i<numAtomsInChain.size();i++){
-    cout<<Utile::abc(i)<<"\t"<<numAtomsInChain[i]<<"\n"<<flush;
+    cout<<Utile::abc(i+1)<<"\t"<<numAtomsInChain[i]<<"\n"<<flush;
 }
     
     if(oneModel.size()!=0)
@@ -93,7 +94,7 @@ Converter::~Converter(){};
 
 int Converter::allAtoms(std::ofstream& fout, int chain, int model){
     
-    
+    int chainNum=0;
     
     //exeptions that chain and model valid
     
@@ -114,13 +115,24 @@ int Converter::allAtoms(std::ofstream& fout, int chain, int model){
     
     //all chain in fixed model
     else if (chain == 0 && model!=0){// print all chains A, B, ...
-	fout<<data[model-1].size()<<"\n";
+	fout<<numAtomsInChain[0]<<"\n";
 	fout<<proteinName;
 	if(numModels>1)
 	    fout<<"\tMODEL "<<model;
+	if(numChains>1)
+	    fout<<"\t"<<"A";
 	fout<<"\n";
 	
 	for(int i=0; i<data[model-1].size(); i++){
+	    if(i==chainDelimiter[chainNum]){
+		chainNum++;
+		fout<<numAtomsInChain[chainNum]<<"\n";
+		fout<<proteinName;
+		if(numModels>1)
+		    fout<<"\tMODEL "<<model;
+		fout<<"\t"<<Utile::abc(chainNum+1);
+		fout<<"\n";
+	    }
 	    fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
 	    fout<<get<0>(data[model-1][i])<<"\t"; // print x
 	    fout<<get<1>(data[model-1][i])<<"\t"; // print y
