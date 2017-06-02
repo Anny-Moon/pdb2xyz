@@ -14,25 +14,25 @@ int main(int argc, char* argv[]){
 	exit(1);
     }
     
-    string nameIn(argv[1]);
-    nameIn += ".pdb";
+//    string nameIn(argv[1]);
+//    nameIn += ".pdb";
     
-    ifstream fin(nameIn);
-    if(!fin){
-	cout<<"Can't find the file\n";
-	exit(1);
-    }
+//    ifstream fin(nameIn);
+//    if(!fin){
+//	cout<<"Can't find the file\n";
+//	exit(1);
+//    }
     ofstream fout("test.xyz");
     
 //    string word;
 //    fin<<word;
 //    cout>>word>>flush;
 
-    Converter converter(fin);
+    Converter converter(argv[1]);
     converter.allAtoms(fout);
-    converter.check();
+//    converter.check();
 
-    fin.close();
+//    fin.close();
     fout.close();
 return 0;
 }

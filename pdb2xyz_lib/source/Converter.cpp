@@ -1,4 +1,5 @@
 #include "Converter.h"
+#include "Utile.h"
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -6,7 +7,9 @@
 using namespace std;
 using namespace PCA;
 
-Converter::Converter(std::ifstream& fin){
+Converter::Converter(string name_in){
+    proteinName = name_in;
+    
     string word;
     string line;
     double x, y, z;
@@ -14,18 +17,26 @@ Converter::Converter(std::ifstream& fin){
     string elementSymbol;
     string atomName;
     char chainID;
+    char previousChainID = 'A';
     string atom = "ATOM";
     string end = "END";
     string endmdl = "ENDMDL";
     string remark = "REMARK";
     string endOfModel = "ENDMDL";
     int count=0;
-    int modelNumber = 0;
-    bool moreThanOneModel = false;
+    int countInChain=0;
     
     cout<<"begin"<<"\n";
     vector<tuple<double, double, double, string, string, int, char>> oneModel;
     
+    string filename(proteinName);
+    filename += ".pdb";
+    
+    ifstream fin(filename);
+    if(!fin){
+	cout<<"Can't find the file\n";
+	exit(1);
+    }
     do{
 //	fin>>word;
 	getline(fin, line);
@@ -46,39 +57,84 @@ Converter::Converter(std::ifstream& fin){
 	    sin>>setw(2)>>elementSymbol;
 //cout<<elementSymbol<<"\n"<<flush;
 	    oneModel.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
+	    
+	    if(chainID!=previousChainID){
+		numAtomsInChain.push_back(count-countInChain);
+		countInChain=count;
+	    }
+	    previousChainID = chainID;
+	    count++;
 	}
 	
 	if(word.compare(endOfModel)==0){
 	    data.push_back(oneModel);
 	    oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
 	}
-	
-	count++;
     }while(word.compare(end)!= 0);
+    
+    numAtomsInChain.push_back(count-countInChain);
+for(int i=0;i<numAtomsInChain.size();i++){
+    cout<<Utile::abc(i)<<"\t"<<numAtomsInChain[i]<<"\n"<<flush;
+}
+    
     if(oneModel.size()!=0)
 	data.push_back(oneModel);
-//    fout.seekp(ios_base::beg); //return the carrege to the beginning of the file
-//    fout<<count<<"\n";
-cout<<data.size()<<"\t"<<data[0].size()<<"\n";
+	
+    numModels = data.size();
+    numAtoms = data[0].size();
+    numChains = Utile::abc(get<6>(data[0][data[0].size()-1]));
+cout<<numChains<<"  atoms\n";
+    
+    fin.close();
     cout<<"end"<<"\n";
 }
 
 Converter::~Converter(){};
 
-int Converter::allAtoms(std::ofstream& fout){
+int Converter::allAtoms(std::ofstream& fout, int chain, int model){
     
-    fout<<data.size()<<"\n";
-    fout<<"comment\n";
-    for(int i=0; i<data.size(); i++){
-	fout<<get<3>(data[0][i])<<"\t"; // print atom name
-	fout<<get<0>(data[0][i])<<"\t"; // print x
-	fout<<get<1>(data[0][i])<<"\t"; // print y
-	fout<<get<2>(data[0][i])<<"\n"; // print z
-	
-//	cout<<get<4>(data[i])<<"\t";
-//	cout<<get<6>(data[i])<<"\t";
-//	cout<<get<5>(data[i])<<"\n";
+    
+    
+    //exeptions that chain and model valid
+    
+    //all chains in all models
+    if(chain==0 && model==0){
+	for(int k=0;k<data.size();k++){
+	fout<<data[k].size()<<"\n";
+	fout<<proteinName<<"\t"<<"MODEL "<<k+1<<"\n";
+	    for(int i=0; i<data[k].size(); i++){
+		fout<<get<3>(data[k][i])<<"\t"; // print element symbol
+		fout<<get<0>(data[k][i])<<"\t"; // print x
+		fout<<get<1>(data[k][i])<<"\t"; // print y
+		fout<<get<2>(data[k][i])<<"\n"; // print z
+	    }
+	    fout<<"\n";
+	}
     }
+    
+    //all chain in fixed model
+    else if (chain == 0 && model!=0){// print all chains A, B, ...
+	fout<<data[model-1].size()<<"\n";
+	fout<<proteinName;
+	if(numModels>1)
+	    fout<<"\tMODEL "<<model;
+	fout<<"\n";
+	
+	for(int i=0; i<data[model-1].size(); i++){
+	    fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
+	    fout<<get<0>(data[model-1][i])<<"\t"; // print x
+	    fout<<get<1>(data[model-1][i])<<"\t"; // print y
+	    fout<<get<2>(data[model-1][i])<<"\n"; // print z
+	}
+    }
+    
+//    //one chain in all models
+//    if else(
+
+    else{
+    
+    }
+
 return 0;
 }
 
