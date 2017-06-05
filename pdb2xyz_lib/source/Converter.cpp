@@ -37,6 +37,8 @@ Converter::Converter(string name_in){
 	cout<<"Can't find the file\n";
 	exit(1);
     }
+    
+    chainDelimiter.push_back(0);
     do{
 //	fin>>word;
 	getline(fin, line);
@@ -115,23 +117,15 @@ int Converter::allAtoms(std::ofstream& fout, int chain, int model){
     
     //all chain in fixed model
     else if (chain == 0 && model!=0){// print all chains A, B, ...
-	fout<<numAtomsInChain[0]<<"\n";
-	fout<<proteinName;
-	if(numModels>1)
-	    fout<<"\tMODEL "<<model;
-	if(numChains>1)
-	    fout<<"\t"<<"A";
-	fout<<"\n";
-	
 	for(int i=0; i<data[model-1].size(); i++){
 	    if(i==chainDelimiter[chainNum]){
-		chainNum++;
 		fout<<numAtomsInChain[chainNum]<<"\n";
 		fout<<proteinName;
 		if(numModels>1)
 		    fout<<"\tMODEL "<<model;
 		fout<<"\t"<<Utile::abc(chainNum+1);
 		fout<<"\n";
+		chainNum++;
 	    }
 	    fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
 	    fout<<get<0>(data[model-1][i])<<"\t"; // print x

@@ -15,6 +15,8 @@ private:
     int numAtoms;
     int numChains;
     std::vector<int> numAtomsInChain;
+    
+    /** first atom of 0th chain (always 0), first atom of 1st chain ...  last atom+1 of last chain */
     std::vector<int> chainDelimiter;
     
 public:
