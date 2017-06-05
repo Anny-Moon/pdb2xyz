@@ -9,30 +9,24 @@ using namespace PCA;
 
 int main(int argc, char* argv[]){
 
+try{
     if(argv[1]==NULL){
 	cout<<"I need name of the polymer\n";
 	exit(1);
     }
     
-//    string nameIn(argv[1]);
-//    nameIn += ".pdb";
-    
-//    ifstream fin(nameIn);
-//    if(!fin){
-//	cout<<"Can't find the file\n";
-//	exit(1);
-//    }
     ofstream fout("test.xyz");
-    
-//    string word;
-//    fin<<word;
-//    cout>>word>>flush;
-
     Converter converter(argv[1]);
-    converter.allAtoms(fout);
+    converter.allAtoms(fout,'A',3);
+    
 //    converter.check();
 
-//    fin.close();
     fout.close();
+}
+
+catch(std::runtime_error e){
+    cout << e.what();
+}
+
 return 0;
 }

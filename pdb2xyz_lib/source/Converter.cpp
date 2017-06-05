@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <exception>
 
 using namespace std;
 using namespace PCA;
@@ -33,10 +34,10 @@ Converter::Converter(string name_in){
     filename += ".pdb";
     
     ifstream fin(filename);
-    if(!fin){
-	cout<<"Can't find the file\n";
-	exit(1);
-    }
+    
+    if(!fin)
+	throw runtime_error("Can't open the file\n");
+
     
     chainDelimiter.push_back(0);
     do{
@@ -99,6 +100,25 @@ int Converter::allAtoms(std::ofstream& fout, char chain, int model){
     int chainNum=0;
     
     //exeptions that chain and model valid
+    if(Utile::abc(chain)>numberOfChains()){
+	string error("Error: There is no chain ");
+	error+=chain;
+	error+=" in ";
+	error+=proteinName;
+	error+=".\n";
+	throw runtime_error(error);
+    }
+    
+    if(model>data.size()){
+	string error("Error: There is no MODEL ");
+	error+=to_string(model);
+	error+=" in ";
+	error+=proteinName;
+	error+=".\nNote: the first model has number 1 (not 0).\n";
+	throw runtime_error(error);
+    }
+    
+    
     
     //all chains in all models
     if(chain==0 && model==0){
@@ -166,7 +186,6 @@ int Converter::check(){
 	    cout<<get<4>(data[k][i])<<"\t"; // print atom name
 	    cout<<get<5>(data[k][i])<<"\t"; // print x
 	    cout<<get<6>(data[k][i])<<"\t"; // print y
-
 	    cout<<get<0>(data[k][i])<<"\t"; // print z
 	    cout<<get<1>(data[k][i])<<"\t";
 	    cout<<get<2>(data[k][i])<<"\t";
