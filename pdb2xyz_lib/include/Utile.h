@@ -1,3 +1,5 @@
+#ifndef PDB2XYZ_FIND_UTILE
+#define PDB2XYZ_FIND_UTILE
 
 namespace PCA{
 class Utile{
@@ -25,3 +27,5 @@ inline bool Utile::isLetter(int number){
 }
 
 }//end of namespace PCA
+
+#endif

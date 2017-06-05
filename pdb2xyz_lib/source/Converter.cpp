@@ -1,5 +1,6 @@
 #include "Converter.h"
 #include "Utile.h"
+#include "FindByURL.h"
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -30,10 +31,15 @@ Converter::Converter(string name_in){
     cout<<"begin"<<"\n";
     vector<tuple<double, double, double, string, string, int, char>> oneModel;
     
-    string filename(proteinName);
-    filename += ".pdb";
+//    string filename(proteinName);
+//    filename += ".pdb";
+//    ifstream fin(filename);
+    string webData;
+    string url = "https://files.rcsb.org/view/"+proteinName+".pdb";
     
-    ifstream fin(filename);
+    FindByURL(url, &webData);
+    
+    stringstream fin(webData);
     
     if(!fin)
 	throw runtime_error("Can't open the file\n");
@@ -89,7 +95,7 @@ for(int i=0;i<numAtomsInChain.size();i++){
     numChains = Utile::abc(get<6>(data[0][data[0].size()-1]));
 cout<<numChains<<"  atoms\n";
     
-    fin.close();
+//    fin.close();
     cout<<"end"<<"\n";
 }
 

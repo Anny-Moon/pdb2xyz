@@ -17,7 +17,7 @@ try{
     
     ofstream fout("test.xyz");
     Converter converter(argv[1]);
-    converter.allAtoms(fout,'A',3);
+    converter.allAtoms(fout);
     
 //    converter.check();
 

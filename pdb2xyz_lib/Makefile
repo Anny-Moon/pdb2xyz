@@ -26,7 +26,7 @@ CC:= g++
 CFLAGS:= -Wall -std=c++11
 
 # Libraries (can also include path to these libraries as -L/SOME_PATH)
-LIB:= -lm
+LIB:= -lm -lcurl
 
 # Optimization (-O3 or -O2)
 OPT:= -O3

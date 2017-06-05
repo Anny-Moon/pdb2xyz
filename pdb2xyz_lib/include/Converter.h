@@ -3,6 +3,9 @@
 #include <string>
 #include <tuple>
 
+#ifndef PDB2XYZ_CONVERTER
+#define PDB2XYZ_CONVERTER
+
 namespace PCA{
 
 class Converter{
@@ -46,3 +49,6 @@ inline int Converter::numberOfChains(){
 
 
 }// end of namespase PCA
+
+
+#endif
