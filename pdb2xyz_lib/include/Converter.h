@@ -23,7 +23,7 @@ public:
     Converter(std::string name_in);
     ~Converter();
     
-    int allAtoms(std::ofstream& fout, int chain=0, int model=1);
+    int allAtoms(std::ofstream& fout, char chain=0, int model=1);
     int CA(std::ofstream& fout);
     int check();
     

@@ -94,7 +94,7 @@ cout<<numChains<<"  atoms\n";
 
 Converter::~Converter(){};
 
-int Converter::allAtoms(std::ofstream& fout, int chain, int model){
+int Converter::allAtoms(std::ofstream& fout, char chain, int model){
     
     int chainNum=0;
     
@@ -137,8 +137,22 @@ int Converter::allAtoms(std::ofstream& fout, int chain, int model){
 //    //one chain in all models
 //    if else(
 
+    // fixed chain in fixed model
     else{
-    
+	chainNum = Utile::abc(chain)-1;
+	fout<<numAtomsInChain[chainNum]<<"\n";
+	fout<<proteinName;
+	if(numModels>1)
+	    fout<<"\tMODEL "<<model;
+	fout<<"\t"<<chain;
+	fout<<"\n";
+	
+	for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++){
+	    fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
+	    fout<<get<0>(data[model-1][i])<<"\t"; // print x
+	    fout<<get<1>(data[model-1][i])<<"\t"; // print y
+	    fout<<get<2>(data[model-1][i])<<"\n"; // print z
+	}
     }
 
 return 0;
