@@ -9,7 +9,10 @@
 using namespace std;
 using namespace PCA;
 
-Converter::Converter(string name_in){
+Converter::Converter(){};
+Converter::~Converter(){};
+
+int Converter::init(string name_in){
     proteinName = name_in;
     
     string word;
@@ -83,9 +86,7 @@ Converter::Converter(string name_in){
     }while(word.compare(end)!= 0);
     chainDelimiter.push_back(count);
     numAtomsInChain.push_back(count-countInChain);
-for(int i=0;i<numAtomsInChain.size();i++){
-    cout<<Utile::abc(i+1)<<"\t"<<numAtomsInChain[i]<<"\n"<<flush;
-}
+
     
     if(oneModel.size()!=0)
 	data.push_back(oneModel);
@@ -93,15 +94,21 @@ for(int i=0;i<numAtomsInChain.size();i++){
     numModels = data.size();
     numAtoms = data[0].size();
     numChains = Utile::abc(get<6>(data[0][data[0].size()-1]));
-cout<<numChains<<"  atoms\n";
+    
+    cout<<"Number of models:"<<numModels<<"\n";
+    cout<<"Number of chains:"<<numChains<<"\n";
+    for(int i=0;i<numAtomsInChain.size();i++){
+	cout<<Utile::abc(i+1)<<"\t"<<numAtomsInChain[i]<<"\n"<<flush;
+    }
     
 //    fin.close();
-    cout<<"end"<<"\n";
+//    cout<<"end"<<"\n";
+return 0;
 }
 
-Converter::~Converter(){};
 
-int Converter::allAtoms(std::ofstream& fout, char chain, int model){
+
+int Converter::print(std::ofstream& fout, char chain, int model){
     
     int chainNum=0;
     
@@ -200,4 +207,38 @@ int Converter::check(){
 	}
     }
 return 0;
+}
+
+Converter* Converter::filterCA(){
+    Converter *ca = new Converter();
+    cout << "here\n"<<flush;
+    ca->proteinName = proteinName;
+    ca->numModels = numModels;
+    ca->numChains = numChains;
+    
+    ca->numAtoms = 0;
+    ca->chainDelimiter.push_back(0);
+    
+    vector<tuple<double, double, double, string, string, int, char>> oneModel;
+    
+    for(int model=0;model<numModels;model++){
+    cout<<model<<"\t";
+	for(int chain=0;chain<numChains;chain++){
+	    for(int i=chainDelimiter[chain];i<chainDelimiter[chain+1];i++){
+		if((get<4>(data[model][i])).compare("CA")==0){
+		    oneModel.push_back(data[model][i]);
+		    ca->numAtoms++;
+		}
+	    }
+	    
+	    if(model==0){
+		ca->numAtomsInChain.push_back(numAtoms);
+		ca->chainDelimiter[chain+1] = numAtoms;
+	    }
+	}
+	ca->data.push_back(oneModel);
+	oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
+    }
+
+return ca;
 }

@@ -16,12 +16,20 @@ try{
     }
     
     ofstream fout("test.xyz");
-    Converter converter(argv[1]);
-    converter.allAtoms(fout);
+    Converter converter;
+    converter.init(argv[1]);
+    
+    converter.print(fout);
     
 //    converter.check();
 
     fout.close();
+    
+    Converter *ca;
+    ofstream fout2("testCA.xyz");
+    ca = converter.filterCA();
+    ca->print(fout2);
+    fout2.close();
 }
 
 catch(std::runtime_error e){
