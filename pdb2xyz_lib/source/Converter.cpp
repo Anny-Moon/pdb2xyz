@@ -47,7 +47,8 @@ int Converter::init(string name_in){
     if(!fin)
 	throw runtime_error("Can't open the file\n");
 
-    
+    data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
+    int model = 0;
     chainDelimiter.push_back(0);
     do{
 //	fin>>word;
@@ -67,8 +68,9 @@ int Converter::init(string name_in){
 	    sin>>setw(8)>>z;
 	    sin.ignore(22); //skip everything before atom name;
 	    sin>>setw(2)>>elementSymbol;
-//cout<<elementSymbol<<"\n"<<flush;
-	    oneModel.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
+	    
+	    //oneModel.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
+	    data[model].push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
 	    
 	    if(chainID!=previousChainID){
 		chainDelimiter.push_back(count);
@@ -80,8 +82,10 @@ int Converter::init(string name_in){
 	}
 	
 	if(word.compare(endOfModel)==0){
-	    data.push_back(oneModel);
-	    oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
+//	    data.push_back(oneModel);
+//	    oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
+	    model++;
+	    data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
 	}
     }while(word.compare(end)!= 0);
     chainDelimiter.push_back(count);
@@ -97,6 +101,7 @@ int Converter::init(string name_in){
     
     cout<<"Number of models:"<<numModels<<"\n";
     cout<<"Number of chains:"<<numChains<<"\n";
+    cout<<"Number of atoms:"<<numAtoms<<"\n";
     for(int i=0;i<numAtomsInChain.size();i++){
 	cout<<Utile::abc(i+1)<<"\t"<<numAtomsInChain[i]<<"\n"<<flush;
     }
@@ -219,14 +224,12 @@ Converter* Converter::filterCA(){
     ca->numAtoms = 0;
     ca->chainDelimiter.push_back(0);
     
-    vector<tuple<double, double, double, string, string, int, char>> oneModel;
-    
     for(int model=0;model<numModels;model++){
-    cout<<model<<"\t";
+    ca->data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
 	for(int chain=0;chain<numChains;chain++){
 	    for(int i=chainDelimiter[chain];i<chainDelimiter[chain+1];i++){
 		if((get<4>(data[model][i])).compare("CA")==0){
-		    oneModel.push_back(data[model][i]);
+		    ca->data[model].push_back(data[model][i]);
 		    ca->numAtoms++;
 		}
 	    }
@@ -236,8 +239,7 @@ Converter* Converter::filterCA(){
 		ca->chainDelimiter[chain+1] = numAtoms;
 	    }
 	}
-	ca->data.push_back(oneModel);
-	oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
+	//oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
     }
 
 return ca;
