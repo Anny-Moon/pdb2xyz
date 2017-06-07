@@ -160,7 +160,7 @@ int Converter::print(std::ofstream& fout, char chain, int model){
 		fout<<numAtomsInChain[chain]<<"\n";
 		fout<<proteinName;
 		if(numModels>1)
-		    fout<<"\tMODEL "<<model;
+		    fout<<"\tMODEL "<<model+1;
 		fout<<"\t"<<Utile::abc(chain+1);
 		fout<<"\n";
 		    for(int i=chainDelimiter[chain]; i<chainDelimiter[chain+1]; i++){
@@ -194,14 +194,16 @@ int Converter::print(std::ofstream& fout, char chain, int model){
     
     //fixed chain in all models
     else if(chain != 0 && model==0){
-	chainNum = Utile::abc(chain)-1;
-	fout<<numAtomsInChain[chainNum]<<"\n";
-	fout<<proteinName;
-	if(numModels>1)
-	    fout<<"\tMODEL "<<model;
-	fout<<"\t"<<chain;
-	fout<<"\n";
+	
 	for(int model=0; model<numModels; model++){
+	    chainNum = Utile::abc(chain)-1;
+	    fout<<numAtomsInChain[chainNum]<<"\n";
+	    fout<<proteinName;
+	    if(numModels>1)
+		fout<<"\tMODEL "<<model+1;
+	    fout<<"\t"<<chain;
+	    fout<<"\n";
+	    
 	    for(int i=chainDelimiter[chainNum];i<chainDelimiter[chainNum+1];i++){
 		fout<<get<3>(data[model][i])<<"\t"; // print element symbol
 		fout<<get<0>(data[model][i])<<"\t"; // print x
