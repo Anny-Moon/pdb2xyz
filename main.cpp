@@ -19,7 +19,7 @@ try{
     Converter converter;
     converter.init(argv[1]);
     
-    converter.print(fout);
+    converter.print(fout,'A',10);
     
 //    converter.check();
 
