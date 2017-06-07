@@ -49,7 +49,7 @@ int Converter::init(string name_in){
     if(!fin)
 	throw runtime_error("Can't open the file\n");
 
-    data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
+//    data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
     int model = 0;
     chainDelimiter.push_back(0);
     do{
@@ -71,8 +71,8 @@ int Converter::init(string name_in){
 	    sin.ignore(22); //skip everything before atom name;
 	    sin>>setw(2)>>elementSymbol;
 	    
-	    //oneModel.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
-	    data[model].push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
+	    oneModel.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
+//	    data[model].push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
 	    
 	    if(chainID!=previousChainID){
 		if(model==0){
@@ -88,10 +88,11 @@ int Converter::init(string name_in){
 	}
 	
 	if(word.compare(endOfModel)==0){
-//	    data.push_back(oneModel);
-//	    oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
+	    cout<<model<<"model\n"<<flush;
+	    data.push_back(oneModel);
+	    oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
 	    model++;
-	    data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
+//	    data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
 	    previousChainID = 'A';
 	    count = 0;
 	    countInChain = 0;
@@ -101,10 +102,16 @@ int Converter::init(string name_in){
     numAtomsInChain.push_back(countSave-countInChainSave);
 
     
-//    if(oneModel.size()!=0)
-//	data.push_back(oneModel);
-	
+    if(oneModel.size()!=0)
+	data.push_back(oneModel);
+//cout<<data[countSave].size();
+//    if(data[countSave].size()==0){
+//	data.erase(data.begin() + countSave);
+//	cout<<"yes\n";
+//    }
+
     numModels = data.size();
+cout<<numModels<<flush;
     numAtoms = data[0].size();
     numChains = Utile::abc(get<6>(data[0][data[0].size()-1]));
     
@@ -247,7 +254,6 @@ return 0;
 
 Converter* Converter::filterCA(){
     Converter *ca = new Converter();
-    cout << "here\n"<<flush;
     ca->proteinName = proteinName;
     ca->numModels = numModels;
     ca->numChains = numChains;
@@ -260,7 +266,6 @@ Converter* Converter::filterCA(){
 	for(int chain=0;chain<numChains;chain++){
 	    for(int i=chainDelimiter[chain];i<chainDelimiter[chain+1];i++){
 		if((get<4>(data[model][i])).compare("CA")==0){
-		//    cout<<i<<"\n"<<flush;
 		    ca->data[model].push_back(data[model][i]);
 		    if(model==0)
 			ca->numAtoms++;
@@ -268,15 +273,21 @@ Converter* Converter::filterCA(){
 	    }
 	    
 	    if(model==0){
-		ca->numAtomsInChain.push_back(numAtoms);
-		ca->chainDelimiter[chain+1] = numAtoms;
+		ca->numAtomsInChain.push_back(ca->numAtoms);
 		
-		cout<<"good\n";
+		ca->chainDelimiter.push_back(ca->numAtoms);
+		
 	    }
 	}
-	cout<<model<<"\n";
 	//oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
     }
-cout<<"at the end\n";
+    
+    cout<<"C alpha only:\n";
+    cout<<"Number of models:"<<ca->numModels<<"\n";
+    cout<<"Number of chains:"<<ca->numChains<<"\n";
+    cout<<"Number of atoms:"<<ca->numAtoms<<"\n";
+    for(int i=0;i<ca->numAtomsInChain.size();i++){
+	cout<<Utile::abc(i+1)<<"\t"<<ca->numAtomsInChain[i]<<"\n"<<flush;
+    }
 return ca;
 }

@@ -19,7 +19,7 @@ try{
     Converter converter;
     converter.init(argv[1]);
     
-    converter.print(fout,'A',10);
+    converter.print(fout,'A',0);
     
 //    converter.check();
 
@@ -28,7 +28,7 @@ try{
     Converter *ca;
     ofstream fout2("testCA.xyz");
     ca = converter.filterCA();
-    ca->print(fout2);
+    ca->print(fout2,'A',0);
     fout2.close();
 }
 
