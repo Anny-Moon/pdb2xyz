@@ -262,24 +262,27 @@ Converter* Converter::filterCA(){
     ca->proteinName = proteinName;
     ca->numModels = numModels;
     ca->numChains = numChains;
-    
     ca->numAtoms = 0;
     ca->chainDelimiter.push_back(0);
+    
+    int countAtomsInChain=0;
     
     for(int model=0;model<numModels;model++){
     ca->data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
 	for(int chain=0;chain<numChains;chain++){
+	    countAtomsInChain=0;
 	    for(int i=chainDelimiter[chain];i<chainDelimiter[chain+1];i++){
 		if((get<4>(data[model][i])).compare("CA")==0){
 		    ca->data[model].push_back(data[model][i]);
-		    if(model==0)
+		    if(model==0){
 			ca->numAtoms++;
+			countAtomsInChain++;
+		    }
 		}
 	    }
 	    
 	    if(model==0){
-		ca->numAtomsInChain.push_back(ca->numAtoms);
-		
+		ca->numAtomsInChain.push_back(countAtomsInChain);
 		ca->chainDelimiter.push_back(ca->numAtoms);
 		
 	    }
@@ -292,7 +295,7 @@ Converter* Converter::filterCA(){
     cout<<"Number of atoms: "<<ca->numAtoms<<"\n";
     cout<<"Number of chains: "<<ca->numChains<<" :\n";
 //    cout<<"Chain name and number of atoms in:\n";
-    for(int i=0;i<ca->numAtomsInChain.size();i++){
+    for(int i=0;i<ca->numChains;i++){
 	cout<<Utile::abc(i+1)<<"\t"<<ca->numAtomsInChain[i]<<"\tatoms\n"<<flush;
     }
 return ca;

@@ -28,7 +28,7 @@ try{
     Converter *ca;
     ofstream fout2("testCA.xyz");
     ca = converter.filterCA();
-    ca->print(fout2,'A',0);
+    ca->print(fout2,0,0);
     fout2.close();
 }
 
