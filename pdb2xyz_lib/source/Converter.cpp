@@ -1,4 +1,5 @@
 #include "Converter.h"
+#include "Keyword.h"
 #include "Utile.h"
 #include "FindByURL.h"
 #include <iomanip>
@@ -23,17 +24,11 @@ int Converter::init(string name_in){
     string atomName;
     char chainID;
     char previousChainID = 'A';
-    string atom = "ATOM";
-    string end = "END";
-    string endmdl = "ENDMDL";
-    string remark = "REMARK";
-    string endOfModel = "ENDMDL";
     int count=0;
     int countSave = 0;
     int countInChain=0;
     int countInChainSave=0;
     
-    cout<<"begin"<<"\n";
     vector<tuple<double, double, double, string, string, int, char>> oneModel;
     
 //    string filename(proteinName);
@@ -43,21 +38,30 @@ int Converter::init(string name_in){
     string url = "https://files.rcsb.org/view/"+proteinName+".pdb";
     
     FindByURL(url, &webData);
-    
     stringstream fin(webData);
     
     if(!fin)
 	throw runtime_error("Can't open the file\n");
 
+    //read the first word to be sure that we got PDB file, not something else
+    getline(fin, line);
+    stringstream sin(line);
+    sin>>word;
+    if(word.compare(Keyword::header)!=0){
+	string error = "Error: Cannot find protein with name '";
+	error += proteinName + "'.\n";
+	throw runtime_error(error);
+    }
 //    data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
     int model = 0;
     chainDelimiter.push_back(0);
+    
     do{
-//	fin>>word;
 	getline(fin, line);
 	stringstream sin(line);
 	sin>>word;
-	if(word.compare(atom)==0){ //find "ATOM"
+	
+	if(word.compare(Keyword::atom)==0){ //find "ATOM"
 	    sin.ignore(8);
 	    sin>>setw(4)>>atomName;
 
@@ -87,8 +91,8 @@ int Converter::init(string name_in){
 	    countSave=count;
 	}
 	
-	if(word.compare(endOfModel)==0){
-	    cout<<model<<"model\n"<<flush;
+	if(word.compare(Keyword::endOfModel)==0){
+//	    cout<<model<<"model\n"<<flush;
 	    data.push_back(oneModel);
 	    oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
 	    model++;
@@ -97,7 +101,7 @@ int Converter::init(string name_in){
 	    count = 0;
 	    countInChain = 0;
 	}
-    }while(word.compare(end)!= 0);
+    }while(word.compare(Keyword::end)!= 0);
     chainDelimiter.push_back(countSave);
     numAtomsInChain.push_back(countSave-countInChainSave);
 
@@ -111,15 +115,14 @@ int Converter::init(string name_in){
 //    }
 
     numModels = data.size();
-cout<<numModels<<flush;
     numAtoms = data[0].size();
     numChains = Utile::abc(get<6>(data[0][data[0].size()-1]));
     
-    cout<<"Number of models:"<<numModels<<"\n";
-    cout<<"Number of chains:"<<numChains<<"\n";
-    cout<<"Number of atoms:"<<numAtoms<<"\n";
+    cout<<"Number of models: "<<numModels<<"\n";
+    cout<<"Number of atoms: "<<numAtoms<<"\n";
+    cout<<"Number of chains: "<<numChains<<" :\n";
     for(int i=0;i<numAtomsInChain.size();i++){
-	cout<<Utile::abc(i+1)<<"\t"<<numAtomsInChain[i]<<"\n"<<flush;
+	cout<<Utile::abc(i+1)<<"\t"<<numAtomsInChain[i]<<"\tatoms\n"<<flush;
     }
     
 //    fin.close();
@@ -284,12 +287,13 @@ Converter* Converter::filterCA(){
 	//oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
     }
     
-    cout<<"C alpha only:\n";
-    cout<<"Number of models:"<<ca->numModels<<"\n";
-    cout<<"Number of chains:"<<ca->numChains<<"\n";
-    cout<<"Number of atoms:"<<ca->numAtoms<<"\n";
+    cout<<"\nC's alpha only:\n";
+    cout<<"Number of models: "<<ca->numModels<<"\n";
+    cout<<"Number of atoms: "<<ca->numAtoms<<"\n";
+    cout<<"Number of chains: "<<ca->numChains<<" :\n";
+//    cout<<"Chain name and number of atoms in:\n";
     for(int i=0;i<ca->numAtomsInChain.size();i++){
-	cout<<Utile::abc(i+1)<<"\t"<<ca->numAtomsInChain[i]<<"\n"<<flush;
+	cout<<Utile::abc(i+1)<<"\t"<<ca->numAtomsInChain[i]<<"\tatoms\n"<<flush;
     }
 return ca;
 }
