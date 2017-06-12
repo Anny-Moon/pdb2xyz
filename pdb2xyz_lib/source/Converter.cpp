@@ -300,3 +300,78 @@ Converter* Converter::filterCA(){
     }
 return ca;
 }
+
+bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
+    vector<int> atomsInPart;
+    vector<int> partDelimiter;
+    vector<int> repeatingAtom;
+    
+    int chainNum = Utile::abc(chain)-1;
+    int count;
+    int countAtoms=0;
+    int resNum;
+    
+    int haveMissings = true; 
+    
+    int tmp_model = 0;
+    resNum = get<5>(data[tmp_model][chainDelimiter[chainNum]]);
+    partDelimiter.push_back(0);
+    count = resNum;
+    countAtoms++;
+    for(int i=chainDelimiter[chainNum]+1;i<chainDelimiter[chainNum+1];i++){
+	resNum = get<5>(data[tmp_model][i]);
+
+	if(resNum==count){ //repeating atom
+	    cout<<resNum<<" !!\n"<<flush;
+	    repeatingAtom.push_back(i);
+	    count--;
+	}
+	
+	if(resNum>count+1){
+	    atomsInPart.push_back(countAtoms);
+	    partDelimiter.push_back(i);
+	    countAtoms=0;
+	    count=resNum-1;
+cout<<resNum<<" Missing before\n"<<flush;
+	}
+	countAtoms++;
+	count++;
+	
+    }
+    partDelimiter.push_back(resNum);
+    
+    if (partDelimiter.size()==2){
+	haveMissings = false;
+	atomsInPart.push_back(numAtoms);
+    }
+    
+    int numParts = atomsInPart.size();
+    int maxPart = 0;
+
+    // find the longest part
+    if(haveMissings){
+	for(int i=1; i<numParts;i++){
+	    if(atomsInPart[i]>atomsInPart[maxPart])
+	    maxPart = i;
+	}
+    }
+	fout<<atomsInPart[maxPart]<<"\n";
+	fout<<proteinName;
+	if(numModels>1)
+	    fout<<"\tMODEL "<<model;
+	fout<<"\t"<<chain;
+	if(haveMissings)
+	    fout<<"\tpart from atoms"<<" to ";
+	fout<<"\n";
+	
+	for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++){
+	    fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
+	    fout<<get<0>(data[model-1][i])<<"\t"; // print x
+	    fout<<get<1>(data[model-1][i])<<"\t"; // print y
+	    fout<<get<2>(data[model-1][i])<<"\n"; // print z
+	}
+return haveMissings;
+}
+
+
+

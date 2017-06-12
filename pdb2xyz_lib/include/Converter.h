@@ -30,6 +30,7 @@ public:
     
     int init(std::string name_in);
     int print(std::ofstream& fout, char chain=0, int model=1);
+    bool printTheLongestPart(std::ofstream& fout, char chain='A', int model=1);
     
     Converter* filterCA();
     int check();

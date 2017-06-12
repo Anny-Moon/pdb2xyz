@@ -28,7 +28,8 @@ try{
     Converter *ca;
     ofstream fout2("testCA.xyz");
     ca = converter.filterCA();
-    ca->print(fout2,0,0);
+//    ca->print(fout2,0,0);
+    ca->printTheLongestPart(fout2);
     fout2.close();
 }
 
