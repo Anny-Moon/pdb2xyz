@@ -321,7 +321,8 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     for(int i=chainDelimiter[chainNum]+1;i<chainDelimiter[chainNum+1];i++){
 	resNum = get<5>(data[tmp_model][i]);
 
-	if(resNum==count){ //repeating atom
+	//find repeated atoms and don't count them!
+	if(resNum==count){ 
 	    cout<<resNum<<" !!\n"<<flush;
 	    repeatedAtom.push_back(i);
 	    count--;
@@ -355,21 +356,27 @@ cout<<resNum<<" Missing before\n"<<flush;
 	    maxPart = i;
 	}
     }
+    
+    // print the longest part without repeated atoms
     fout<<atomsInPart[maxPart]<<"\n";
     fout<<proteinName;
     if(numModels>1)
 	fout<<"\tMODEL "<<model;
     fout<<"\t"<<chain;
     if(haveMissings)
-	fout<<"\tpart from atoms"<<" to ";
+	fout<<"\tpart from atom"<<(get<5>(data[model-1][partDelimiter[maxPart]]));
+	fout<<" to "<<(get<5>(data[model-1][partDelimiter[maxPart+1]]));
     fout<<"\n";
 
     int countRepeat = 0;
-    for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++){
+//    for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++){
+    for(int i=partDelimiter[maxPart]; i<partDelimiter[maxPart+1]; i++){
+	//don't print repeated atoms
 	if(repeatedAtom[countRepeat]==i){
 	    countRepeat++;
 	    continue;
 	}
+	//------
 	
 	fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
 	fout<<get<0>(data[model-1][i])<<"\t"; // print x
