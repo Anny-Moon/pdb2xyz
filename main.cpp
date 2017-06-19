@@ -19,8 +19,8 @@ try{
     Converter converter;
     converter.init(argv[1]);
     
-    converter.print(fout,'A',0);
-    
+///    converter.print(fout,'A',0);
+    converter.printTheLongestPart(fout,'A',0);
 //    converter.check();
 
     fout.close();
@@ -30,7 +30,7 @@ try{
     ofstream fout3("testCApart.xyz");
     ca = converter.filterCA();
     ca->print(fout2,0,0);
-    ca->printTheLongestPart(fout3,'A',0);
+//    ca->printTheLongestPart(fout3,'A',0);
 //ca->printTheLongestPart(fout3);
     fout2.close();
     fout3.close();

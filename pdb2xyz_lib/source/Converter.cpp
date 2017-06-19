@@ -172,7 +172,7 @@ int Converter::print(std::ofstream& fout, char chain, int model){
 			fout<<get<1>(data[model][i])<<"\t"; // print y
 			fout<<get<2>(data[model][i])<<"\n"; // print z
 		    }
-		//fout<<"\n";
+		//gfout<<"\n";
 	    }
 	}
     }
@@ -310,6 +310,8 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     int count;
     int countAtoms=0;
     int resNum;
+    string atomName;
+    string previousAtomName = "";
     int tmp_model;
     
     int haveMissings = true; 
@@ -327,10 +329,16 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
 
     for(int i=chainDelimiter[chainNum]+1;i<chainDelimiter[chainNum+1];i++){
 	resNum = get<5>(data[tmp_model][i]);
+	atomName = get<4>(data[tmp_model][i]);
+cout<<resNum<<" "<<atomName<<"\n";
 	//find repeated atoms and don't count them!
-	if(resNum==count){ 
+	if(resNum==count && atomName.compare(previousAtomName)==0){ 
 	    cout<<resNum<<" !!\n"<<flush;
 	    repeatedAtom.push_back(i);
+	    count--;
+	}
+	
+	if(resNum==count && atomName.compare(previousAtomName)!=0){ 
 	    count--;
 	}
 	
@@ -343,6 +351,7 @@ cout<<resNum<<" Missing before\n"<<flush;
 	}
 	countAtoms++;
 	count++;
+	previousAtomName = atomName;
 	
     }
     partDelimiter.push_back(resNum);
