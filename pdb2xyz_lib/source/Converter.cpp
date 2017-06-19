@@ -304,7 +304,7 @@ return ca;
 bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     vector<int> atomsInPart;
     vector<int> partDelimiter;
-    vector<int> repeatingAtom;
+    vector<int> repeatedAtom;
     
     int chainNum = Utile::abc(chain)-1;
     int count;
@@ -323,7 +323,7 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
 
 	if(resNum==count){ //repeating atom
 	    cout<<resNum<<" !!\n"<<flush;
-	    repeatingAtom.push_back(i);
+	    repeatedAtom.push_back(i);
 	    count--;
 	}
 	
@@ -355,21 +355,27 @@ cout<<resNum<<" Missing before\n"<<flush;
 	    maxPart = i;
 	}
     }
-	fout<<atomsInPart[maxPart]<<"\n";
-	fout<<proteinName;
-	if(numModels>1)
-	    fout<<"\tMODEL "<<model;
-	fout<<"\t"<<chain;
-	if(haveMissings)
-	    fout<<"\tpart from atoms"<<" to ";
-	fout<<"\n";
-	
-	for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++){
-	    fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
-	    fout<<get<0>(data[model-1][i])<<"\t"; // print x
-	    fout<<get<1>(data[model-1][i])<<"\t"; // print y
-	    fout<<get<2>(data[model-1][i])<<"\n"; // print z
+    fout<<atomsInPart[maxPart]<<"\n";
+    fout<<proteinName;
+    if(numModels>1)
+	fout<<"\tMODEL "<<model;
+    fout<<"\t"<<chain;
+    if(haveMissings)
+	fout<<"\tpart from atoms"<<" to ";
+    fout<<"\n";
+
+    int countRepeat = 0;
+    for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++){
+	if(repeatedAtom[countRepeat]==i){
+	    countRepeat++;
+	    continue;
 	}
+	
+	fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
+	fout<<get<0>(data[model-1][i])<<"\t"; // print x
+	fout<<get<1>(data[model-1][i])<<"\t"; // print y
+	fout<<get<2>(data[model-1][i])<<"\n"; // print z
+    }
 return haveMissings;
 }
 

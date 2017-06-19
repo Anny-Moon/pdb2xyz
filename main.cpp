@@ -27,10 +27,12 @@ try{
     
     Converter *ca;
     ofstream fout2("testCA.xyz");
+    ofstream fout3("testCApart.xyz");
     ca = converter.filterCA();
-//    ca->print(fout2,0,0);
-    ca->printTheLongestPart(fout2);
+    ca->print(fout2,0,0);
+    ca->printTheLongestPart(fout3);
     fout2.close();
+    fout3.close();
 }
 
 catch(std::runtime_error e){
