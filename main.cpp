@@ -30,7 +30,8 @@ try{
     ofstream fout3("testCApart.xyz");
     ca = converter.filterCA();
     ca->print(fout2,0,0);
-    ca->printTheLongestPart(fout3);
+    ca->printTheLongestPart(fout3,'A',0);
+//ca->printTheLongestPart(fout3);
     fout2.close();
     fout3.close();
 }
