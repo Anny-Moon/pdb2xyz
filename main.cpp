@@ -86,7 +86,6 @@ try{
     }
     
     else{
-	converter.print(fout,chain,model);
 	if(isPart)
 	    converter.printTheLongestPart(fout,chain,model);
 	else
