@@ -34,7 +34,7 @@ public:
     int print(std::ofstream& fout, char chain=0, int model=1);
     bool printTheLongestPart(std::ofstream& fout, char chain='A', int model=1);
     
-    Converter* filterCA();
+    Converter* filter(std::string atomName="CA");
     int check();
     
     inline int numberOfModels();

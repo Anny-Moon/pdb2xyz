@@ -11,9 +11,8 @@ using namespace PCA;
 int main(int argc, char* argv[]){
 
 try{
-    
     string file_out;
-    int isCAlpha = false;
+    string filterAtom = "";
     int isPart = false;
     char chain = 'A';
     int model = 1;
@@ -22,17 +21,17 @@ try{
     while(true){
 	static struct option long_options[] = {
 	    // flags
-	    {"c-alpha",		no_argument,		&isCAlpha,	1},
 	    {"part",		no_argument,		&isPart,	1},
 	    // variables
 	    {"output",	required_argument,	0,		'o'},
+	    {"filter",	required_argument,	0,		'f'},
 	    {"chain",	required_argument,	0,		'C'},
 	    {"model",	required_argument,	0,		'M'},
 	    {0,			0,			0,		0}
 	};
 	
 	int option_index = 0;
-	int c = getopt_long(argc, argv, "o:C:M:", long_options, &option_index);
+	int c = getopt_long(argc, argv, "o:f:C:M:", long_options, &option_index);
 	if(c == -1)
 	    break;
 
@@ -49,12 +48,16 @@ try{
 	case 'o':
 	    file_out = optarg;
 	break;
+	case 'f':
+	    filterAtom = optarg;
+	break;
 	case 'C':
 	    chain = *optarg;
 	break;
 	case 'M':
 	    model = atoi(optarg);
 	break;
+	default:;
 	
 	}
     
@@ -73,13 +76,13 @@ try{
     Converter converter;
     converter.init(proteinName);
 
-    if(isCAlpha){
-	Converter *ca;
-	ca = converter.filterCA();
+    if(filterAtom.size()>0){
+	Converter *filtered;
+	filtered = converter.filter(filterAtom);
 	if(isPart)
-	    ca->printTheLongestPart(fout,chain,model);
+	    filtered->printTheLongestPart(fout,chain,model);
 	else
-	    ca->print(fout,chain,model);
+	    filtered->print(fout,chain,model);
     }
     
     else{

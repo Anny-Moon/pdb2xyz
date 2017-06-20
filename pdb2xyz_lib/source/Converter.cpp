@@ -256,7 +256,7 @@ int Converter::check(){
 return 0;
 }
 
-Converter* Converter::filterCA(){
+Converter* Converter::filter(string atomName){
     Converter *ca = new Converter();
     ca->proteinName = proteinName;
     ca->numModels = numModels;
@@ -271,7 +271,7 @@ Converter* Converter::filterCA(){
 	for(int chain=0;chain<numChains;chain++){
 	    countAtomsInChain=0;
 	    for(int i=chainDelimiter[chain];i<chainDelimiter[chain+1];i++){
-		if((get<4>(data[model][i])).compare("CA")==0){
+		if((get<4>(data[model][i])).compare(atomName)==0){
 		    ca->data[model].push_back(data[model][i]);
 		    if(model==0){
 			ca->numAtoms++;
@@ -287,6 +287,15 @@ Converter* Converter::filterCA(){
 	    }
 	}
 	//oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
+    }
+    
+    if(countAtomsInChain==0){
+	std::string error("\nError: There is no atoms ");
+	error+=atomName;
+	error+=" in ";
+	error+=proteinName;
+	error+=".\n";
+	throw std::runtime_error(error);
     }
     
     cout<<"\nC's alpha only:\n";
