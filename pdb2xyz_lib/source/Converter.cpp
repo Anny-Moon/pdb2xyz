@@ -21,13 +21,14 @@ int Converter::init(string name_in){
     double x, y, z;
     double resNumber;
     string elementSymbol;
-    string atomName;
+    string atomName="";
     char chainID;
     char previousChainID = 'A';
     int count=0;
     int countSave = 0;
     int countInChain=0;
     int countInChainSave=0;
+    char a,b,c,d;
     
     vector<tuple<double, double, double, string, string, int, char>> oneModel;
     
@@ -62,11 +63,25 @@ int Converter::init(string name_in){
 	sin>>word;
 	
 	if(word.compare(Keyword::atom)==0){ //find "ATOM"
+//cout<<word<<"\t";
 	    sin.ignore(8);
-	    sin>>setw(4)>>atomName;
+//	    sin>>setw(4)>>noskipws>>atomName>>skipws;
+sin>>noskipws>>a>>b>>c>>d>>skipws;
+//cout<<a<<b<<c<<d<<"||\t";
+if(!isblank(a))
+atomName+=a;
+if(!isblank(b))
+atomName+=b;
+if(!isblank(c))
+atomName+=c;
+if(!isblank(d))
+atomName+=d;
+//cout<<"|"<<atomName<<"|\n";
 
-	    sin.ignore(4+(4-atomName.size()));
+//	    sin.ignore(4+(4-atomName.size()));
+sin.ignore(4);
 	    sin>>chainID;
+//cout<<chainID<<"\n";
 	    sin>>setw(4)>>resNumber;
 //	    sin.ignore(24); //skip everything from ATOM to coordinates;
 	    sin>>setw(8)>>x;
@@ -77,7 +92,7 @@ int Converter::init(string name_in){
 	    
 	    oneModel.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
 //	    data[model].push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
-	    
+atomName="";
 	    if(chainID!=previousChainID){
 		if(model==0){
 		    chainDelimiter.push_back(count);
