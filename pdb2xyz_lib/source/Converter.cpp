@@ -156,7 +156,7 @@ int Converter::print(std::ofstream& fout, char chain, int model){
     checkChainNumber(chain);
     
     //all chains in all models
-    if(chain==0 && model==0){
+    if(chain =='0' && model==0){
 	for(int model=0;model<numModels;model++){
 	    for(int chain=0;chain<numChains;chain++){
 		fout<<numAtomsInChain[chain]<<"\n";
@@ -177,7 +177,7 @@ int Converter::print(std::ofstream& fout, char chain, int model){
     }
     
     //all chains in fixed model
-    else if (chain == 0 && model!=0){// print all chains A, B, ...
+    else if (chain == '0' && model!=0){// print all chains A, B, ...
 	for(int chain=0; chain<numChains; chain++){
 	    fout<<numAtomsInChain[chain]<<"\n";
 	    fout<<proteinName;
@@ -195,7 +195,7 @@ int Converter::print(std::ofstream& fout, char chain, int model){
     }
     
     //fixed chain in all models
-    else if(chain != 0 && model==0){
+    else if(chain != '0' && model==0){
 	
 	for(int model=0; model<numModels; model++){
 	    chainNum = Utile::abc(chain)-1;
