@@ -336,6 +336,7 @@ cout<<resNum<<" "<<atomName<<"\n";
 	    cout<<resNum<<" !!\n"<<flush;
 	    repeatedAtom.push_back(i);
 	    count--;
+	    countAtoms--;
 	}
 	
 	if(resNum==count && atomName.compare(previousAtomName)!=0){ 
