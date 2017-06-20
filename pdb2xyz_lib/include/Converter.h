@@ -1,7 +1,9 @@
+#include "Utile.h"
 #include <fstream>
 #include <vector>
 #include <string>
 #include <tuple>
+#include <exception>
 
 #ifndef PDB2XYZ_CONVERTER
 #define PDB2XYZ_CONVERTER
@@ -11,7 +13,7 @@ namespace PCA{
 class Converter{
 private:
 public:
-//    std::ifstream& fin;
+
     std::string proteinName;
     /** x, y, z, <element symbol> <atom name> <residue nuber> <chainID>*/
     std::vector<std::vector<std::tuple <double, double, double, std::string, std::string, int, char>>>data;
@@ -38,6 +40,10 @@ public:
     inline int numberOfModels();
     inline int numberOfAtoms();
     inline int numberOfChains();
+    
+    /** Trow exeptions*/
+    inline void checkModelNumber(int model);
+    inline void checkChainNumber(char chain);
 };
 
 inline int Converter::numberOfModels(){
@@ -52,6 +58,27 @@ inline int Converter::numberOfChains(){
     return numChains;
 }
 
+inline void Converter::checkModelNumber(int model){
+    if(model>numModels){
+	std::string error("\nError: There is no MODEL ");
+	error+=std::to_string(model);
+	error+=" in ";
+	error+=proteinName;
+	error+=".\nNote: the first model has number 1 (not 0).\n";
+	throw std::runtime_error(error);
+    }
+}
+
+inline void Converter::checkChainNumber(char chain){
+    if(Utile::abc(chain)>numChains){
+	std::string error("\nError: There is no chain ");
+	error+=chain;
+	error+=" in ";
+	error+=proteinName;
+	error+=".\nNote: the first chain is A, the second is B and so on.\n";
+	throw std::runtime_error(error);
+    }
+}
 
 }// end of namespase PCA
 

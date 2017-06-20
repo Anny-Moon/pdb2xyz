@@ -151,25 +151,9 @@ int Converter::print(std::ofstream& fout, char chain, int model){
     
     int chainNum=0;
     
-    //exeptions that chain and model are valid
-    if(Utile::abc(chain)>numberOfChains()){
-	string error("Error: There is no chain ");
-	error+=chain;
-	error+=" in ";
-	error+=proteinName;
-	error+=".\n";
-	throw runtime_error(error);
-    }
-    
-    if(model>data.size()){
-	string error("Error: There is no MODEL ");
-	error+=to_string(model);
-	error+=" in ";
-	error+=proteinName;
-	error+=".\nNote: the first model has number 1 (not 0).\n";
-	throw runtime_error(error);
-    }
-    
+    //check that chain and model are valid
+    checkModelNumber(model);
+    checkChainNumber(chain);
     
     //all chains in all models
     if(chain==0 && model==0){
@@ -332,6 +316,9 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     int haveMissings = true; 
     int havingRepeats = false;
     
+    //check that chain and model are valid
+    checkModelNumber(model);
+    checkChainNumber(chain);
 
     tmp_model = model-1;
 
