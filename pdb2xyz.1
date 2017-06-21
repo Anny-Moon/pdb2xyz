@@ -1,0 +1,40 @@
+.\" Process this file with
+.\" grof -man -Tascii pdb2xyz.1
+.\"
+.TH pdb2xyz 1 "June 2017" pdb2xyz "User Manual"
+.SH NAME
+pdb2xyz \- parse PDB files and create xyz output.
+.SH SYNOPSIS
+.B pdb2xyz [OPTIONS]
+.I polymer
+
+.SH DESCRIPTION
+
+Read \fIpolymer\fR.pdb file from \fIhttp://www.rcsb.org/\fR and parse it.
+
+.SH OPTIONS
+
+.IP "\fB--part\fR"
+Print the longers part without missing atoms and exlude repeated atoms if
+there are any.
+
+.IP "\fB-o \fR<filename.xyz>   \fB--output\fR=<filename.xyz>"
+Name of output file.
+
+.IP "\fB-f \fR<value>   \fB--filter\fR=<value>"
+Name of atom you want to parse for. For example c-alpha atoms are marked
+as CA according PDB standard. Don't mix up atom name and symbol of the element.
+
+.IP "\fB-C \fR<value>   \fB--chain\fR=<value>"
+Name of a chain. In PDB standard the name is a capital Latin letter.
+If you set the value to 0 then the program prints all chains
+(not all functions allow this).
+
+.IP "\fB-M \fR<value>   \fB--model\fR=<value>"
+Number of a model. If you set the value to 0 then the program 
+prints all models (not all functions allow this).
+
+.SH AUTHOR
+Anna Sinelnikova (anna.sinelnikova@physics.uu.se)
+
+
