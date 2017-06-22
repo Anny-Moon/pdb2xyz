@@ -35,7 +35,6 @@ public:
     bool printTheLongestPart(std::ofstream& fout, char chain='A', int model=1);
     
     Converter* filter(std::string atomName="CA");
-    int check();
     
     inline void xyzHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms=0, std::string message = "");
     /**@param modelNum - actual number (0,1..) @param chain - 0,1,.. */

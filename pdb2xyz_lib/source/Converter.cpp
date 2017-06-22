@@ -28,7 +28,7 @@ int Converter::init(string name_in){
     int countSave = 0;
     int countInChain=0;
     int countInChainSave=0;
-    char a,b,c,d;
+    char letter1,letter2,letter3,letter4;
     
     vector<tuple<double, double, double, string, string, int, char>> oneModel;
     
@@ -63,25 +63,21 @@ int Converter::init(string name_in){
 	sin>>word;
 	
 	if(word.compare(Keyword::atom)==0){ //find "ATOM"
-//cout<<word<<"\t";
 	    sin.ignore(8);
-//	    sin>>setw(4)>>noskipws>>atomName>>skipws;
-sin>>noskipws>>a>>b>>c>>d>>skipws;
-//cout<<a<<b<<c<<d<<"||\t";
-if(!isblank(a))
-atomName+=a;
-if(!isblank(b))
-atomName+=b;
-if(!isblank(c))
-atomName+=c;
-if(!isblank(d))
-atomName+=d;
-//cout<<"|"<<atomName<<"|\n";
+	    
+	    sin>>noskipws>>letter1>>letter2>>letter3>>letter4>>skipws;
+	    if(!isblank(letter1))
+		atomName+=letter1;
+	    if(!isblank(letter2))
+		atomName+=letter2;
+	    if(!isblank(letter3))
+		atomName+=letter3;
+	    if(!isblank(letter4))
+		atomName+=letter4;
 
-//	    sin.ignore(4+(4-atomName.size()));
-sin.ignore(4);
+	    sin.ignore(4);
 	    sin>>chainID;
-//cout<<chainID<<"\n";
+
 	    sin>>setw(4)>>resNumber;
 //	    sin.ignore(24); //skip everything from ATOM to coordinates;
 	    sin>>setw(8)>>x;
@@ -92,7 +88,8 @@ sin.ignore(4);
 	    
 	    oneModel.push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
 //	    data[model].push_back(make_tuple(x,y,z,elementSymbol,atomName,resNumber,chainID));
-atomName="";
+	    atomName="";
+	    
 	    if(chainID!=previousChainID){
 		if(model==0){
 		    chainDelimiter.push_back(count);
@@ -191,24 +188,6 @@ int Converter::print(std::ofstream& fout, char chain, int model){
 return 0;
 }
 
-int Converter::check(){
-    
-    for(int k=0; k<data.size(); k++){
-	cout<<"MODEL\t"<<k+1<<"\n\n";
-	for(int i=0; i<data[k].size(); i++){
-	    cout<<get<4>(data[k][i])<<"\t"; // print atom name
-	    cout<<get<5>(data[k][i])<<"\t"; // print x
-	    cout<<get<6>(data[k][i])<<"\t"; // print y
-	    cout<<get<0>(data[k][i])<<"\t"; // print z
-	    cout<<get<1>(data[k][i])<<"\t";
-	    cout<<get<2>(data[k][i])<<"\t";
-
-	    cout<<get<3>(data[k][i])<<"\n";
-	}
-    }
-return 0;
-}
-
 Converter* Converter::filter(string atomName){
     Converter *ca = new Converter();
     ca->proteinName = proteinName;
@@ -218,7 +197,6 @@ Converter* Converter::filter(string atomName){
     ca->chainDelimiter.push_back(0);
     
     int countAtomsInChain=0;
-    
     for(int model=0;model<numModels;model++){
     ca->data.push_back(vector<tuple<double, double, double, string, string, int, char>>());
 	for(int chain=0;chain<numChains;chain++){
@@ -226,6 +204,7 @@ Converter* Converter::filter(string atomName){
 	    for(int i=chainDelimiter[chain];i<chainDelimiter[chain+1];i++){
 		if((get<4>(data[model][i])).compare(atomName)==0){
 		    ca->data[model].push_back(data[model][i]);
+
 		    if(model==0){
 			ca->numAtoms++;
 			countAtomsInChain++;
@@ -242,7 +221,7 @@ Converter* Converter::filter(string atomName){
 	//oneModel = vector<tuple<double, double, double, string, string, int, char>>();// clean
     }
     
-    if(countAtomsInChain==0){
+    if(ca->numAtoms==0){
 	std::string error("\nError: There is no atoms ");
 	error+=atomName;
 	error+=" in ";
@@ -251,7 +230,7 @@ Converter* Converter::filter(string atomName){
 	throw std::runtime_error(error);
     }
     
-    cout<<"\nC's alpha only:\n";
+    cout<<"\nFiler: "<<atomName<<"\n";
     cout<<"Number of models: "<<ca->numModels<<"\n";
     cout<<"Number of atoms: "<<ca->numAtoms<<"\n";
     cout<<"Number of chains: "<<ca->numChains<<" :\n";
