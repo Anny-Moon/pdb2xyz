@@ -268,12 +268,13 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     vector<int> repeatedAtom;
     
     int chainNum = Utile::abc(chain)-1;
+    int modelNum = model-1;
+    
     int count;
     int countAtoms=0;
     int resNum;
     string atomName;
     string previousAtomName = "";
-    int tmp_model;
     
     int haveMissings = true; 
     int havingRepeats = false;
@@ -282,17 +283,24 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     checkModelNumber(model);
     checkChainNumber(chain);
 
-    tmp_model = model-1;
-
-    resNum = get<5>(data[tmp_model][chainDelimiter[chainNum]]);
+    resNum = get<5>(data[modelNum][chainDelimiter[chainNum]]);
     partDelimiter.push_back(0);
     count = resNum;
     countAtoms++;
 
     for(int i=chainDelimiter[chainNum]+1;i<chainDelimiter[chainNum+1];i++){
-	resNum = get<5>(data[tmp_model][i]);
-	atomName = get<4>(data[tmp_model][i]);
+	resNum = get<5>(data[modelNum][i]);
+	atomName = get<4>(data[modelNum][i]);
 cout<<resNum<<" "<<atomName<<"\n";
+	//missing
+	if(resNum>count+1){
+	    atomsInPart.push_back(countAtoms);
+	    partDelimiter.push_back(i);
+	    countAtoms=0;
+	    count=resNum-1;
+cout<<resNum<<" Missing before\n"<<flush;
+	}
+	
 	//find repeated atoms and don't count them!
 	if(resNum==count && atomName.compare(previousAtomName)==0){ 
 	    cout<<resNum<<" !!\n"<<flush;
@@ -302,22 +310,15 @@ cout<<resNum<<" "<<atomName<<"\n";
 	}
 	
 	if(resNum==count && atomName.compare(previousAtomName)!=0){ 
+//	    countAtoms++;
 	    count--;
 	}
 	
-	if(resNum>count+1){
-	    atomsInPart.push_back(countAtoms);
-	    partDelimiter.push_back(i);
-	    countAtoms=0;
-	    count=resNum-1;
-cout<<resNum<<" Missing before\n"<<flush;
-	}
 	countAtoms++;
 	count++;
 	previousAtomName = atomName;
-	
     }
-    partDelimiter.push_back(resNum);
+    partDelimiter.push_back(chainDelimiter[chainNum+1]);
     
     if (partDelimiter.size()==2){
 	haveMissings = false;
@@ -337,9 +338,8 @@ cout<<resNum<<" Missing before\n"<<flush;
 	    maxPart = i;
 	}
     }
-    
     // print the longest part without repeated atoms
-    fout<<atomsInPart[maxPart]<<"\n";
+/*    fout<<atomsInPart[maxPart]<<"\n";
     fout<<proteinName;
     if(numModels>1)
 	fout<<"\tMODEL "<<model;
@@ -349,6 +349,14 @@ cout<<resNum<<" Missing before\n"<<flush;
 	fout<<" to "<<(get<5>(data[model-1][partDelimiter[maxPart+1]]));
     }
     fout<<"\n";
+*/
+cout<<get<5>(data[modelNum][partDelimiter[maxPart]])<<" "<<get<5>(data[modelNum][partDelimiter[maxPart+1]-1])<<"\n";
+    string message = "\tpart from residue ";
+    message+= to_string(get<5>(data[modelNum][partDelimiter[maxPart]]));
+    message+=" to ";
+    message+= to_string(get<5>(data[modelNum][partDelimiter[maxPart+1]-1]));
+    
+    xyzHeader(modelNum, chainNum, fout, atomsInPart[maxPart], message);
     int countRepeat = 0;
     for(int i=partDelimiter[maxPart]; i<partDelimiter[maxPart+1]; i++){
 
@@ -360,11 +368,7 @@ cout<<resNum<<" Missing before\n"<<flush;
 	    }
 	}
 	//------
-	
-	fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
-	fout<<get<0>(data[model-1][i])<<"\t"; // print x
-	fout<<get<1>(data[model-1][i])<<"\t"; // print y
-	fout<<get<2>(data[model-1][i])<<"\n"; // print z
+	xyzLine(modelNum, i, fout);
     }
 
 return haveMissings;

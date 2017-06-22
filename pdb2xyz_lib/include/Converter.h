@@ -15,7 +15,7 @@ private:
 public:
 
     std::string proteinName;
-    /** x, y, z, <element symbol> <atom name> <residue nuber> <chainID>*/
+    /** x, y, z, <element symbol> <atom name> <residue number> <chainID>*/
     std::vector<std::vector<std::tuple <double, double, double, std::string, std::string, int, char>>>data;
     int numModels;
     int numAtoms;
@@ -39,7 +39,7 @@ public:
     
     inline void xyzHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms=0, std::string message = "");
     /**@param modelNum - actual number (0,1..) @param chain - 0,1,.. */
-    inline void xyzLine(int modelNum, int chainNum, std::ofstream& fout);
+    inline void xyzLine(int modelNum, int atom, std::ofstream& fout);
     void xyzBlock(int modelNum, int chainNum, std::ofstream& fout);
     
     /** Throw exeptions*/
@@ -62,11 +62,11 @@ inline void Converter::xyzHeader(int modelNum, int chainNum, std::ofstream& fout
 	fout<<"\n";
 }
 
-inline void Converter::xyzLine(int modelNum, int chainNum, std::ofstream& fout){
-    fout<<std::get<3>(data[modelNum][chainNum])<<"\t"; // print element symbol
-    fout<<std::get<0>(data[modelNum][chainNum])<<"\t"; // print x
-    fout<<std::get<1>(data[modelNum][chainNum])<<"\t"; // print y
-    fout<<std::get<2>(data[modelNum][chainNum])<<"\n"; // print z
+inline void Converter::xyzLine(int modelNum, int atom, std::ofstream& fout){
+    fout<<std::get<3>(data[modelNum][atom])<<"\t"; // print element symbol
+    fout<<std::get<0>(data[modelNum][atom])<<"\t"; // print x
+    fout<<std::get<1>(data[modelNum][atom])<<"\t"; // print y
+    fout<<std::get<2>(data[modelNum][atom])<<"\n"; // print z
 }
 
 inline void Converter::checkModelNumber(int model){
