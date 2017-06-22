@@ -37,25 +37,36 @@ public:
     Converter* filter(std::string atomName="CA");
     int check();
     
-    inline int numberOfModels();
-    inline int numberOfAtoms();
-    inline int numberOfChains();
+    inline void xyzHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms=0, std::string message = "");
+    /**@param modelNum - actual number (0,1..) @param chain - 0,1,.. */
+    inline void xyzLine(int modelNum, int chainNum, std::ofstream& fout);
+    void xyzBlock(int modelNum, int chainNum, std::ofstream& fout);
     
-    /** Trow exeptions*/
+    /** Throw exeptions*/
     inline void checkModelNumber(int model);
     inline void checkChainNumber(char chain);
 };
 
-inline int Converter::numberOfModels(){
-    return numModels;
+inline void Converter::xyzHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms, std::string message){
+	if(numberOfAtoms==0)
+	    fout<<numAtomsInChain[chainNum]<<"\n";
+	
+	else
+	    fout<<numberOfAtoms<<"\n";
+	
+	fout<<proteinName;
+	fout<<"\t"<<Utile::abc(chainNum+1);
+	if(numModels>1)
+	    fout<<"\tMODEL "<<modelNum+1;
+	fout<<"\t"<<message;
+	fout<<"\n";
 }
 
-inline int Converter::numberOfAtoms(){
-    return numAtoms;
-}
-
-inline int Converter::numberOfChains(){
-    return numChains;
+inline void Converter::xyzLine(int modelNum, int chainNum, std::ofstream& fout){
+    fout<<std::get<3>(data[modelNum][chainNum])<<"\t"; // print element symbol
+    fout<<std::get<0>(data[modelNum][chainNum])<<"\t"; // print x
+    fout<<std::get<1>(data[modelNum][chainNum])<<"\t"; // print y
+    fout<<std::get<2>(data[modelNum][chainNum])<<"\n"; // print z
 }
 
 inline void Converter::checkModelNumber(int model){

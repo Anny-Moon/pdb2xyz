@@ -145,93 +145,46 @@ atomName="";
 return 0;
 }
 
-
+void Converter::xyzBlock(int modelNum, int chainNum, std::ofstream& fout){
+    xyzHeader(modelNum, chainNum, fout);
+    for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++)
+	xyzLine(modelNum, i, fout);
+}
 
 int Converter::print(std::ofstream& fout, char chain, int model){
     
     int chainNum=0;
-    
+    int modelNum=0;
     //check that chain and model are valid
     checkModelNumber(model);
     checkChainNumber(chain);
     
-    //all chains in all models
-    if(chain =='0' && model==0){
-	for(int model=0;model<numModels;model++){
-	    for(int chain=0;chain<numChains;chain++){
-		fout<<numAtomsInChain[chain]<<"\n";
-		fout<<proteinName;
-		if(numModels>1)
-		    fout<<"\tMODEL "<<model+1;
-		fout<<"\t"<<Utile::abc(chain+1);
-		fout<<"\n";
-		    for(int i=chainDelimiter[chain]; i<chainDelimiter[chain+1]; i++){
-			fout<<get<3>(data[model][i])<<"\t"; // print element symbol
-			fout<<get<0>(data[model][i])<<"\t"; // print x
-			fout<<get<1>(data[model][i])<<"\t"; // print y
-			fout<<get<2>(data[model][i])<<"\n"; // print z
-		    }
-		//gfout<<"\n";
-	    }
-	}
-    }
-    
-    //all chains in fixed model
-    else if (chain == '0' && model!=0){// print all chains A, B, ...
-	for(int chain=0; chain<numChains; chain++){
-	    fout<<numAtomsInChain[chain]<<"\n";
-	    fout<<proteinName;
-	    if(numModels>1)
-		fout<<"\tMODEL "<<model;
-	    fout<<"\t"<<Utile::abc(chain+1);
-	    fout<<"\n";
-	    for(int i=chainDelimiter[chain]; i<chainDelimiter[chain+1]; i++){
-		fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
-		fout<<get<0>(data[model-1][i])<<"\t"; // print x
-		fout<<get<1>(data[model-1][i])<<"\t"; // print y
-		fout<<get<2>(data[model-1][i])<<"\n"; // print z
-	    }
-	}
+    // fixed chain in fixed model
+    if(chain != '0' && model != 0){
+	chainNum = Utile::abc(chain)-1;
+	modelNum = model-1;
+	xyzBlock(modelNum, chainNum, fout);
     }
     
     //fixed chain in all models
     else if(chain != '0' && model==0){
-	
-	for(int model=0; model<numModels; model++){
-	    chainNum = Utile::abc(chain)-1;
-	    fout<<numAtomsInChain[chainNum]<<"\n";
-	    fout<<proteinName;
-	    if(numModels>1)
-		fout<<"\tMODEL "<<model+1;
-	    fout<<"\t"<<chain;
-	    fout<<"\n";
-	    
-	    for(int i=chainDelimiter[chainNum];i<chainDelimiter[chainNum+1];i++){
-		fout<<get<3>(data[model][i])<<"\t"; // print element symbol
-		fout<<get<0>(data[model][i])<<"\t"; // print x
-		fout<<get<1>(data[model][i])<<"\t"; // print y
-		fout<<get<2>(data[model][i])<<"\n"; // print z
-	    }
-	    
-	}
-    
-    }
-
-    // fixed chain in fixed model
-    else{
 	chainNum = Utile::abc(chain)-1;
-	fout<<numAtomsInChain[chainNum]<<"\n";
-	fout<<proteinName;
-	if(numModels>1)
-	    fout<<"\tMODEL "<<model;
-	fout<<"\t"<<chain;
-	fout<<"\n";
-	
-	for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++){
-	    fout<<get<3>(data[model-1][i])<<"\t"; // print element symbol
-	    fout<<get<0>(data[model-1][i])<<"\t"; // print x
-	    fout<<get<1>(data[model-1][i])<<"\t"; // print y
-	    fout<<get<2>(data[model-1][i])<<"\n"; // print z
+	for(int modelNum=0; modelNum<numModels; modelNum++)
+	    xyzBlock(modelNum, chainNum, fout);
+    }
+    
+    //all chains in fixed model
+    else if (chain == '0' && model!=0){
+	modelNum = model-1;
+	for(int chainNum=0; chainNum<numChains; chainNum++)
+	    xyzBlock(modelNum, chainNum, fout);
+    }
+    
+    //all chains in all models
+    else{
+	for(int modelNum=0;modelNum<numModels;modelNum++){
+	    for(int chainNum=0;chainNum<numChains;chainNum++)
+		xyzBlock(modelNum, chainNum, fout);
 	}
     }
 
