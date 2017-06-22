@@ -1,5 +1,6 @@
 #include "Utile.h"
 #include <fstream>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <tuple>
@@ -13,7 +14,8 @@ namespace PCA{
 class Converter{
 private:
 public:
-
+    static enum class Format{xyz, tbm} outputFormat;
+    
     std::string proteinName;
     /** x, y, z, <element symbol> <atom name> <residue number> <chainID>*/
     std::vector<std::vector<std::tuple <double, double, double, std::string, std::string, int, char>>>data;
@@ -41,6 +43,13 @@ public:
     inline void xyzLine(int modelNum, int atom, std::ofstream& fout);
     void xyzBlock(int modelNum, int chainNum, std::ofstream& fout);
     
+    inline void fileHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms=0, std::string message = "");
+    inline void fileLine(int modelNum, int atom, std::ofstream& fout);
+    inline void fileBlock(int modelNum, int chainNum, std::ofstream& fout);
+    
+    void tbmHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms=0, std::string message = "");
+    inline void tbmLine(int modelNum, int atom, std::ofstream& fout);
+    
     /** Throw exeptions*/
     inline void checkModelNumber(int model);
     inline void checkChainNumber(char chain);
@@ -66,6 +75,44 @@ inline void Converter::xyzLine(int modelNum, int atom, std::ofstream& fout){
     fout<<std::get<0>(data[modelNum][atom])<<"\t"; // print x
     fout<<std::get<1>(data[modelNum][atom])<<"\t"; // print y
     fout<<std::get<2>(data[modelNum][atom])<<"\n"; // print z
+}
+
+inline void Converter::tbmLine(int modelNum, int atom, std::ofstream& fout){
+    fout<<std::get<0>(data[modelNum][atom])<<"\t"; // print x
+    fout<<std::get<1>(data[modelNum][atom])<<"\t"; // print y
+    fout<<std::get<2>(data[modelNum][atom])<<"\t"; // print z
+    fout<<"<>\t["<<atom<<"]\n";
+}
+
+inline void Converter::fileHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms, std::string message){
+    switch(outputFormat){
+    case Format::xyz:
+	xyzHeader(modelNum, chainNum, fout, numberOfAtoms, message);
+    break;
+    case Format::tbm:
+	tbmHeader(modelNum, chainNum, fout, numberOfAtoms, message);
+    break;
+    default:
+	std::cout<<"Error in fileHeader: unknown output format\n";
+	exit(1);
+    break;
+    }
+
+}
+
+inline void Converter::fileLine(int modelNum, int atom, std::ofstream& fout){
+    switch(outputFormat){
+    case Format::xyz:
+	xyzLine(modelNum, atom, fout);
+    break;
+    case Format::tbm:
+	tbmLine(modelNum, atom, fout);
+    break;
+    default:
+	std::cout<<"Error in fileLine: unknown output format\n";
+	exit(1);
+    break;
+    }
 }
 
 inline void Converter::checkModelNumber(int model){

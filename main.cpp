@@ -16,7 +16,7 @@ try{
     int isPart = false;
     char chain = 'A';
     int model = 1;
-    
+    string outputFormat = "xyz";    
     
     while(true){
 	static struct option long_options[] = {
@@ -46,7 +46,7 @@ try{
 	    cout << "\n";
 	break;
 	case 'o':
-	    file_out = optarg;
+	    outputFormat = optarg;
 	break;
 	case 'f':
 	    filterAtom = optarg;
@@ -62,15 +62,27 @@ try{
 	}
     
     }
-
-//    if(argv[1]==NULL){
-//	cout<<"I need name of the polymer\n";
-//	exit(1);
-//    }
     string proteinName = argv[optind];
     
+    // Define output format------
+    if(outputFormat.compare("xyz")==0)
+	Converter::outputFormat = Converter::Format::xyz;
+    
+    else if(outputFormat.compare("tbm")==0)
+	Converter::outputFormat = Converter::Format::tbm;
+    
+    else{
+	cout<<"\nError: unknow output format.\n";
+	cout<<"List of knowm formats:\n";
+	cout<<"\txyz - coordinates and name of element";
+	cout<<"\ttbm - tight binding model format";
+	cout<<"\n.";
+	exit(1);
+    }
+    //--------------------------
+    
     if(file_out.size()==0)
-	file_out = proteinName + ".xyz";
+	file_out = proteinName + "." + outputFormat;
     
     ofstream fout(file_out);
     Converter converter;
@@ -91,23 +103,8 @@ try{
 	else
 	    converter.print(fout,chain,model);
     }
-//    converter.print(fout,'A',0);
-//    converter.printTheLongestPart(fout,'A',0);
-//    converter.check();
 
     fout.close();
-/*    
-    Converter *ca;
-    ofstream fout2("testCA.xyz");
-    ofstream fout3("testCApart.xyz");
-    ca = converter.filterCA();
-    ca->print(fout2,0,0);
-//    ca->printTheLongestPart(fout3,'A',0);
-ca->printTheLongestPart(fout3);
-    fout2.close();
-    fout3.close();
-*/
-
 }//end of try
 
 catch(std::runtime_error e){

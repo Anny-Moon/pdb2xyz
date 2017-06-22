@@ -10,6 +10,8 @@
 using namespace std;
 using namespace PCA;
 
+Converter::Format Converter::outputFormat;
+
 Converter::Converter(){};
 Converter::~Converter(){};
 
@@ -146,6 +148,37 @@ void Converter::xyzBlock(int modelNum, int chainNum, std::ofstream& fout){
     xyzHeader(modelNum, chainNum, fout);
     for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++)
 	xyzLine(modelNum, i, fout);
+}
+
+inline void Converter::tbmHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms, std::string message){
+	fout<<"\* ";
+	fout<<proteinName;
+	fout<<"\t"<<Utile::abc(chainNum+1);
+	if(numModels>1)
+	    fout<<"\tMODEL "<<modelNum+1;
+	fout<<"\n* Number of atoms: ";
+	
+	if(numberOfAtoms==0){
+	    numberOfAtoms = numAtomsInChain[chainNum];
+	}
+	
+	fout<<numberOfAtoms<<"\n";
+	
+	fout<<"\n* "<<message;
+	fout<<" *\\n";
+	
+	fout<<"Amplitudes:\n";
+	fout<<"Mode = 0\n";
+    
+	for(int n = 0; n < numberOfAtoms; n++){
+	    fout<<"1\t0\t"<<n<<"\t"<<n+1<<"\n";
+	    fout<<"1\t0\t"<<n+1<<"\t"<<n<<"\n";
+	}
+	
+	fout<<"\n";
+	fout<<"Geometry:\n";
+	fout<<"Dimensions = 3\n";
+	fout<<"Num specifiers = 0\n";
 }
 
 int Converter::print(std::ofstream& fout, char chain, int model){
