@@ -71,11 +71,15 @@ try{
     else if(outputFormat.compare("tbm")==0)
 	Converter::outputFormat = Converter::Format::tbm;
     
+    else if(outputFormat.compare("pca")==0)
+	Converter::outputFormat = Converter::Format::pca;
+    
     else{
 	cout<<"\nError: unknow output format.\n";
 	cout<<"List of knowm formats:\n";
-	cout<<"\txyz - coordinates and name of element";
-	cout<<"\ttbm - tight binding model format";
+	cout<<"\txyz - coordinates and name of element.\n";
+	cout<<"\ttbm - tight binding model format.\n";
+	cout<<"\tpca - only coordinates, no header.\n";
 	cout<<"\n.";
 	exit(1);
     }

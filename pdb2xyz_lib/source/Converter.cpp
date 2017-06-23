@@ -144,19 +144,30 @@ int Converter::init(string name_in){
 return 0;
 }
 
+void Converter::fileBlock(int modelNum, int chainNum, std::ofstream& fout){
+    fileHeader(modelNum, chainNum, fout);
+    for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++)
+	fileLine(modelNum, i, fout);
+}
+
 void Converter::xyzBlock(int modelNum, int chainNum, std::ofstream& fout){
     xyzHeader(modelNum, chainNum, fout);
     for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++)
 	xyzLine(modelNum, i, fout);
 }
-
+/*
+void Converter::pcaBlock(int modelNum, int chainNum, std::ofstream& fout){
+    for(int i=chainDelimiter[chainNum]; i<chainDelimiter[chainNum+1]; i++)
+	fileLine(modelNum, i, fout);
+}
+*/
 inline void Converter::tbmHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms, std::string message){
-	fout<<"\* ";
+	fout<<"\\* ";
 	fout<<proteinName;
 	fout<<"\t"<<Utile::abc(chainNum+1);
 	if(numModels>1)
 	    fout<<"\tMODEL "<<modelNum+1;
-	fout<<"\n* Number of atoms: ";
+	fout<<"\n * Number of atoms: ";
 	
 	if(numberOfAtoms==0){
 	    numberOfAtoms = numAtomsInChain[chainNum];
@@ -164,8 +175,8 @@ inline void Converter::tbmHeader(int modelNum, int chainNum, std::ofstream& fout
 	
 	fout<<numberOfAtoms<<"\n";
 	
-	fout<<"\n* "<<message;
-	fout<<" *\\n";
+	fout<<" * "<<message;
+	fout<<" *\\ \n";
 	
 	fout<<"Amplitudes:\n";
 	fout<<"Mode = 0\n";
@@ -193,14 +204,31 @@ int Converter::print(std::ofstream& fout, char chain, int model){
     if(chain != '0' && model != 0){
 	chainNum = Utile::abc(chain)-1;
 	modelNum = model-1;
-	xyzBlock(modelNum, chainNum, fout);
+	fileBlock(modelNum, chainNum, fout);
     }
     
     //fixed chain in all models
     else if(chain != '0' && model==0){
-	chainNum = Utile::abc(chain)-1;
-	for(int modelNum=0; modelNum<numModels; modelNum++)
-	    xyzBlock(modelNum, chainNum, fout);
+	switch(outputFormat){
+	    case Format::xyz:
+		chainNum = Utile::abc(chain)-1;
+		for(int modelNum=0; modelNum<numModels; modelNum++)
+		    fileBlock(modelNum, chainNum, fout);
+	    break;
+	    
+	    case Format::pca:
+		chainNum = Utile::abc(chain)-1;
+		for(int modelNum=0; modelNum<numModels; modelNum++){
+		    fileBlock(modelNum, chainNum, fout);
+		    fout<<"\n\n";
+		}
+	    break;
+	    
+	    default:
+		string error("\nError: This format does not");
+		error+=" support multy model output.\n";
+		throw runtime_error(error);
+	}
     }
     
     //all chains in fixed model
