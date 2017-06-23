@@ -32,7 +32,8 @@ public:
     Converter();
     ~Converter();
     
-    int init(std::string name_in);
+    /** If path to file is "" then it will go to the Internet*/
+    int init(std::string name_in, std::string pathToFile="");
     int print(std::ofstream& fout, char chain=0, int model=1);
     bool printTheLongestPart(std::ofstream& fout, char chain='A', int model=1);
     

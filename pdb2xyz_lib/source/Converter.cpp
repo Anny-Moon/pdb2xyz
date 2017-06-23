@@ -15,7 +15,7 @@ Converter::Format Converter::outputFormat;
 Converter::Converter(){};
 Converter::~Converter(){};
 
-int Converter::init(string name_in){
+int Converter::init(string name_in, string pathToFile){
     proteinName = name_in;
     
     string word;
@@ -34,14 +34,25 @@ int Converter::init(string name_in){
     
     vector<tuple<double, double, double, string, string, int, char>> oneModel;
     
-//    string filename(proteinName);
-//    filename += ".pdb";
-//    ifstream fin(filename);
-    string webData;
-    string url = "https://files.rcsb.org/view/"+proteinName+".pdb";
+    stringstream fin;
+    if(pathToFile.compare("")!=0){
+	string filename(pathToFile);
+	filename += proteinName;
+	filename += ".pdb";
+	ifstream file(filename);
+	fin<<file.rdbuf();
+	file.close();
+    }
     
-    FindByURL(url, &webData);
-    stringstream fin(webData);
+    else{
+	cout<<"Downloading data from the Internet...\n";
+	string webData;
+	string url = "https://files.rcsb.org/view/"+proteinName+".pdb";
+	FindByURL(url, &webData);
+//	stringstream fin(webData);
+	stringstream web(webData);
+	fin<<web.rdbuf();
+    }
     
     if(!fin)
 	throw runtime_error("Can't open the file\n");

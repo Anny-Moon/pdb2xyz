@@ -11,7 +11,8 @@ using namespace PCA;
 int main(int argc, char* argv[]){
 
 try{
-    string file_out;
+    string file_out = "";
+    string file_in = "";
     string filterAtom = "";
     int isPart = false;
     char chain = 'A';
@@ -28,11 +29,12 @@ try{
 	    {"chain",	required_argument,	0,		'C'},
 	    {"model",	required_argument,	0,		'M'},
 	    {"file-out",	required_argument,	0,		'n'},
+	    {"file-in",	required_argument,	0,		'i'},
 	    {0,			0,			0,		0}
 	};
 	
 	int option_index = 0;
-	int c = getopt_long(argc, argv, "o:f:C:M:n:", long_options, &option_index);
+	int c = getopt_long(argc, argv, "o:f:C:M:n:i:", long_options, &option_index);
 	if(c == -1)
 	    break;
 
@@ -60,6 +62,9 @@ try{
 	break;
 	case 'n':
 	    file_out = optarg;
+	break;
+	case 'i':
+	    file_in = optarg;
 	break;
 	default:;
 	
@@ -98,7 +103,7 @@ try{
 	exit(1);
     }
     Converter converter;
-    converter.init(proteinName);
+    converter.init(proteinName, file_in);
 
     if(filterAtom.size()>0){
 	Converter *filtered;

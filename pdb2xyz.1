@@ -10,7 +10,7 @@ pdb2xyz \- parse PDB files and create xyz output.
 
 .SH DESCRIPTION
 
-Read \fIpolymer\fR.pdb file from \fIhttp://www.rcsb.org/\fR and parse it.
+Read \fIpolymer\fR.pdb file from file or \fIhttp://www.rcsb.org/\fR and parse it.
 
 .SH OPTIONS
 
@@ -20,6 +20,7 @@ there are any.
 
 .IP "\fB-o \fR<value>   \fB--output\fR=<value>"
 Format of output file: \fBxyz, tbm, pca\fR.
+Default value is \fBxyz\fR.
 
 .IP "\fB-f \fR<value>   \fB--filter\fR=<value>"
 Name of atom you want to parse for. For example c-alpha atoms are marked
@@ -29,13 +30,21 @@ as CA according PDB standard. Don't mix up atom name and symbol of the element.
 Name of a chain. In PDB standard the name is a capital Latin letter.
 If you set the value to 0 then the program prints all chains
 (not all functions allow this).
+Default value is \fBA\fR.
 
 .IP "\fB-M \fR<value>   \fB--model\fR=<value>"
 Number of a model. If you set the value to 0 then the program 
 prints all models (not all functions allow this).
+Default value is \fB1\fR.
 
 .IP "\fB-n \fR<path/name.extention>   \fB--file-out\fR=<path/name.extention>"
-Full name and path of output file.
+Full name and path of output file. By default output file will be called
+\fIpolymer\fR.<output format>
+
+.IP "\fB-i \fR<path_to_pdb_file/>   \fB--file-in\fR=<path_to_pdb_file/>"
+Path to input pdb file, whitch has name \fIpolymer\fR.pdb.
+By default the path is empty, what means that
+data will be downloaded (but not saved) from the Internet (\fIhttp://www.rcsb.org/\fR).
 
 .SH AUTHOR
 Anna Sinelnikova (anna.sinelnikova@physics.uu.se)
