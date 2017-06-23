@@ -209,15 +209,14 @@ int Converter::print(std::ofstream& fout, char chain, int model){
     
     //fixed chain in all models
     else if(chain != '0' && model==0){
+	chainNum = Utile::abc(chain)-1;
 	switch(outputFormat){
 	    case Format::xyz:
-		chainNum = Utile::abc(chain)-1;
 		for(int modelNum=0; modelNum<numModels; modelNum++)
 		    fileBlock(modelNum, chainNum, fout);
 	    break;
 	    
 	    case Format::pca:
-		chainNum = Utile::abc(chain)-1;
 		for(int modelNum=0; modelNum<numModels; modelNum++){
 		    fileBlock(modelNum, chainNum, fout);
 		    fout<<"\n\n";
@@ -234,18 +233,34 @@ int Converter::print(std::ofstream& fout, char chain, int model){
     //all chains in fixed model
     else if (chain == '0' && model!=0){
 	modelNum = model-1;
-	for(int chainNum=0; chainNum<numChains; chainNum++)
-	    xyzBlock(modelNum, chainNum, fout);
+	switch (outputFormat){
+	    case Format::xyz:
+		for(int chainNum=0; chainNum<numChains; chainNum++)
+		    xyzBlock(modelNum, chainNum, fout);
+		
+	    break;
+	    default:
+		string error("\nError: This format does not");
+		error+=" support multy chain output.\n";
+		throw runtime_error(error);
+	}
     }
     
     //all chains in all models
     else{
-	for(int modelNum=0;modelNum<numModels;modelNum++){
-	    for(int chainNum=0;chainNum<numChains;chainNum++)
-		xyzBlock(modelNum, chainNum, fout);
+	switch(outputFormat){
+	    case Format::xyz:
+		for(int modelNum=0;modelNum<numModels;modelNum++){
+		    for(int chainNum=0;chainNum<numChains;chainNum++)
+		    xyzBlock(modelNum, chainNum, fout);
+		}
+	    break;
+	    default:
+		string error("\nError: This format does not");
+		error+=" support multy chain output.\n";
+		throw runtime_error(error);
 	}
     }
-
 return 0;
 }
 
@@ -396,7 +411,7 @@ cout<<get<5>(data[modelNum][partDelimiter[maxPart]])<<" "<<get<5>(data[modelNum]
     message+=" to ";
     message+= to_string(get<5>(data[modelNum][partDelimiter[maxPart+1]-1]));
     
-    xyzHeader(modelNum, chainNum, fout, atomsInPart[maxPart], message);
+    fileHeader(modelNum, chainNum, fout, atomsInPart[maxPart], message);
     int countRepeat = 0;
     for(int i=partDelimiter[maxPart]; i<partDelimiter[maxPart+1]; i++){
 
@@ -408,7 +423,7 @@ cout<<get<5>(data[modelNum][partDelimiter[maxPart]])<<" "<<get<5>(data[modelNum]
 	    }
 	}
 	//------
-	xyzLine(modelNum, i, fout);
+	fileLine(modelNum, i, fout);
     }
 
 return haveMissings;
