@@ -27,11 +27,12 @@ try{
 	    {"filter",	required_argument,	0,		'f'},
 	    {"chain",	required_argument,	0,		'C'},
 	    {"model",	required_argument,	0,		'M'},
+	    {"file-out",	required_argument,	0,		'n'},
 	    {0,			0,			0,		0}
 	};
 	
 	int option_index = 0;
-	int c = getopt_long(argc, argv, "o:f:C:M:", long_options, &option_index);
+	int c = getopt_long(argc, argv, "o:f:C:M:n:", long_options, &option_index);
 	if(c == -1)
 	    break;
 
@@ -56,6 +57,9 @@ try{
 	break;
 	case 'M':
 	    model = atoi(optarg);
+	break;
+	case 'n':
+	    file_out = optarg;
 	break;
 	default:;
 	
@@ -89,6 +93,10 @@ try{
 	file_out = proteinName + "." + outputFormat;
     
     ofstream fout(file_out);
+    if(!fout){
+	cout<<"Error: Cannot create output file with required name.\n";
+	exit(1);
+    }
     Converter converter;
     converter.init(proteinName);
 

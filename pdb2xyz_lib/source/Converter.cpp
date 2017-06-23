@@ -131,7 +131,7 @@ int Converter::init(string name_in){
     numModels = data.size();
     numAtoms = data[0].size();
     numChains = Utile::abc(get<6>(data[0][data[0].size()-1]));
-    
+    cout<<"PROTEIN: "<<proteinName<<"\n";
     cout<<"Number of models: "<<numModels<<"\n";
     cout<<"Number of atoms: "<<numAtoms<<"\n";
     cout<<"Number of chains: "<<numChains<<" :\n";
@@ -346,19 +346,19 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     for(int i=chainDelimiter[chainNum]+1;i<chainDelimiter[chainNum+1];i++){
 	resNum = get<5>(data[modelNum][i]);
 	atomName = get<4>(data[modelNum][i]);
-cout<<resNum<<" "<<atomName<<"\n";
+//cout<<resNum<<" "<<atomName<<"\n";
 	//missing
 	if(resNum>count+1){
 	    atomsInPart.push_back(countAtoms);
 	    partDelimiter.push_back(i);
 	    countAtoms=0;
 	    count=resNum-1;
-cout<<resNum<<" Missing before\n"<<flush;
+//cout<<resNum<<" Missing before\n"<<flush;
 	}
 	
 	//find repeated atoms and don't count them!
 	if(resNum==count && atomName.compare(previousAtomName)==0){ 
-	    cout<<resNum<<" !!\n"<<flush;
+//	    cout<<resNum<<" !!\n"<<flush;
 	    repeatedAtom.push_back(i);
 	    count--;
 	    countAtoms--;
@@ -374,25 +374,40 @@ cout<<resNum<<" Missing before\n"<<flush;
 	previousAtomName = atomName;
     }
     partDelimiter.push_back(chainDelimiter[chainNum+1]);
-    
+    atomsInPart.push_back(countAtoms);
+
     if (partDelimiter.size()==2){
 	haveMissings = false;
-	atomsInPart.push_back(numAtoms);
+//	atomsInPart.push_back(numAtoms);
     }
     
-    if(repeatedAtom.size()!=0)
+    if(repeatedAtom.size()!=0){
 	havingRepeats = true;
-   
+	cout<<"\n\tREPEATED ATOMS WAS EXCLUDED.\n";
+    }
+    
+    else
+	cout<<"\nNo repeated atoms.\n";
     int numParts = atomsInPart.size();
+//cout<<numParts<<" numparts\n\n";
     int maxPart = 0;
 
     // find the longest part
     if(haveMissings){
-	for(int i=1; i<numParts;i++){
+	cout<<"Parts without missings:\n";
+	for(int i=0; i<numParts;i++){
+	    cout<<"\t"<<i<<". from: "<<get<5>(data[modelNum][partDelimiter[i]])<<"\t";
+	    cout<<" to: "<<get<5>(data[modelNum][partDelimiter[i+1]-1])<<"\t";
+	    cout<<"with "<<atomsInPart[i]<<" atoms.\n";
 	    if(atomsInPart[i]>atomsInPart[maxPart])
-	    maxPart = i;
+		maxPart = i;
 	}
+	cout<<"I took part number: "<<maxPart<<"\n";
+    
     }
+    
+    else
+	cout<<"No missing residues.\n";
     // print the longest part without repeated atoms
 /*    fout<<atomsInPart[maxPart]<<"\n";
     fout<<proteinName;
@@ -405,7 +420,7 @@ cout<<resNum<<" Missing before\n"<<flush;
     }
     fout<<"\n";
 */
-cout<<get<5>(data[modelNum][partDelimiter[maxPart]])<<" "<<get<5>(data[modelNum][partDelimiter[maxPart+1]-1])<<"\n";
+//cout<<get<5>(data[modelNum][partDelimiter[maxPart]])<<" "<<get<5>(data[modelNum][partDelimiter[maxPart+1]-1])<<"\n";
     string message = "\tpart from residue ";
     message+= to_string(get<5>(data[modelNum][partDelimiter[maxPart]]));
     message+=" to ";

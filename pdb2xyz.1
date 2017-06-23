@@ -18,7 +18,7 @@ Read \fIpolymer\fR.pdb file from \fIhttp://www.rcsb.org/\fR and parse it.
 Print the longers part without missing atoms and exlude repeated atoms if
 there are any.
 
-.IP "\fB-o \fR<filename.xyz>   \fB--output\fR=<filename.xyz>"
+.IP "\fB-o \fR<value>   \fB--output\fR=<value>"
 Format of output file: \fBxyz, tbm, pca\fR.
 
 .IP "\fB-f \fR<value>   \fB--filter\fR=<value>"
@@ -33,6 +33,9 @@ If you set the value to 0 then the program prints all chains
 .IP "\fB-M \fR<value>   \fB--model\fR=<value>"
 Number of a model. If you set the value to 0 then the program 
 prints all models (not all functions allow this).
+
+.IP "\fB-n \fR<path/name.extention>   \fB--file-out\fR=<path/name.extention>"
+Full name and path of output file.
 
 .SH AUTHOR
 Anna Sinelnikova (anna.sinelnikova@physics.uu.se)
