@@ -193,8 +193,8 @@ inline void Converter::tbmHeader(int modelNum, int chainNum, std::ofstream& fout
 	fout<<"Mode = 0\n";
     
 	for(int n = 0; n < numberOfAtoms; n++){
-	    fout<<"1\t0\t"<<n<<"\t"<<n+1<<"\n";
-	    fout<<"1\t0\t"<<n+1<<"\t"<<n<<"\n";
+	    fout<<"1\t0\t["<<n<<"]\t["<<n+1<<"]\n";
+	    fout<<"1\t0\t["<<n+1<<"]\t["<<n<<"]\n";
 	}
 	
 	fout<<"\n";

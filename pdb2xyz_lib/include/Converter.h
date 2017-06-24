@@ -84,9 +84,10 @@ inline void Converter::xyzLine(int modelNum, int atom, std::ofstream& fout){
 }
 
 inline void Converter::tbmLine(int modelNum, int atom, std::ofstream& fout){
+    fout<<"(";
     fout<<std::get<0>(data[modelNum][atom])<<"\t"; // print x
     fout<<std::get<1>(data[modelNum][atom])<<"\t"; // print y
-    fout<<std::get<2>(data[modelNum][atom])<<"\t"; // print z
+    fout<<std::get<2>(data[modelNum][atom])<<")\t"; // print z
     fout<<"<>\t["<<atom<<"]\n";
 }
 
