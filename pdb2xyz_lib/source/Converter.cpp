@@ -395,6 +395,7 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     if(repeatedAtom.size()!=0){
 	havingRepeats = true;
 	cout<<"\n\tREPEATED ATOMS WAS EXCLUDED.\n";
+	cout<<"Number of atoms: "<<countAtoms<<"\n";
     }
     
     else
