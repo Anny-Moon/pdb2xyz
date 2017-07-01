@@ -329,6 +329,13 @@ return ca;
 }
 
 bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
+    
+    //check that chain and model are valid
+    checkModelNumber(model);
+    checkChainNumber(chain);
+    doesNotSupportMultyModel(model, "--part");
+    doesNotSupportMultyChain(chain, "--part");
+    
     vector<int> atomsInPart;
     vector<int> partDelimiter;
     vector<int> repeatedAtom;
@@ -345,10 +352,7 @@ bool Converter::printTheLongestPart(std::ofstream& fout, char chain, int model){
     int haveMissings = true; 
     int havingRepeats = false;
     
-    //check that chain and model are valid
-    checkModelNumber(model);
-    checkChainNumber(chain);
-
+    
     resNum = get<5>(data[modelNum][chainDelimiter[chainNum]]);
     partDelimiter.push_back(0);
     count = resNum;

@@ -58,7 +58,9 @@ public:
     
     /** Throw exeptions*/
     inline void checkModelNumber(int model);
+    inline void doesNotSupportMultyModel(int model, std::string who="This regime");
     inline void checkChainNumber(char chain);
+    inline void doesNotSupportMultyChain(char chain, std::string who="This regime");
 };
 
 inline void Converter::xyzHeader(int modelNum, int chainNum, std::ofstream& fout, int numberOfAtoms, std::string message){
@@ -177,6 +179,24 @@ inline void Converter::checkChainNumber(char chain){
 	error+=" in ";
 	error+=proteinName;
 	error+=".\nNote: the first chain is A, the second is B and so on.\n";
+	throw std::runtime_error(error);
+    }
+}
+
+inline void Converter::doesNotSupportMultyModel(int model, std::string who){
+    if(model==0){
+	std::string error("\nError: ");
+	error+= who;
+	error+=" does not support multy model output.\n ";
+	throw std::runtime_error(error);
+    }
+}
+
+inline void Converter::doesNotSupportMultyChain(char chain, std::string who){
+    if(chain=='0'){
+	std::string error("\nError: ");
+	error+= who;
+	error+=" does not support multy model output.\n ";
 	throw std::runtime_error(error);
     }
 }
