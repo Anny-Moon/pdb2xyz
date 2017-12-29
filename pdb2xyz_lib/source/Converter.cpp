@@ -317,7 +317,7 @@ Converter* Converter::filter(string atomName){
 	throw std::runtime_error(error);
     }
     
-    cout<<"\nFiler: "<<atomName<<"\n";
+    cout<<"\nFilter: "<<atomName<<"\n";
     cout<<"Number of models: "<<ca->numModels<<"\n";
     cout<<"Number of atoms: "<<ca->numAtoms<<"\n";
     cout<<"Number of chains: "<<ca->numChains<<" :\n";

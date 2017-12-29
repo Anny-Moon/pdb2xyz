@@ -95,7 +95,7 @@ try{
     //--------------------------
     
     if(file_out.size()==0)
-	file_out = proteinName + "." + outputFormat;
+	file_out = "results/" + proteinName + "." + outputFormat;
     
     ofstream fout(file_out);
     if(!fout){
