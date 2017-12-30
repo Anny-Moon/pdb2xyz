@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/92849464.svg)](https://zenodo.org/badge/latestdoi/92849464)
+
 # pdb2xyz
 Converter from PDB format to XYZ. PDB file can be read either from the Internet or from the computer.
 Can write xyz-file with only CA (or any others) atoms.
